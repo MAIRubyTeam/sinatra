@@ -1,12 +1,11 @@
 # hello.rb
 require 'sinatra'
+require 'active_support/all'
+
+Time::DATE_FORMATS[:my_datetime] = "%Y-%m-%d Hour: %H Minute: %M Second: %S"
 
 get '/' do
-  'Hello world!'
-end
-
-get 'do_post' do
-	"blabla"
+  Time.now.to_s(:my_datetime)
 end
 
 not_found do
@@ -14,15 +13,11 @@ not_found do
      "Something wrong! Try to type URL correctly or call to UFO."
 end
 
-get "/hello/:name" do
-     "Hello, #{params[:name]}."
+get "/:entity/:id" do
+    #model = params[:entity].constantize
+    #record = model.find(params[:id])
+
+    #render json: record
+   "{id: #{params[:id]}}"
 end
 
-get '/say/*/to/*' do
-  # соответствует /say/hello/to/world
-  params['splat'] # => ["hello", "world"]
-end
-
-get '/admin/create' do
-  erb :create_form
-end
