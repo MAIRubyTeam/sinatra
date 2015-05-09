@@ -1,0 +1,14 @@
+#edit.erb
+<h3>Редактировать</h3>
+<a href="/posts/<%= <hh user=post>.id %>/delete">Удалить страницу</a>
+
+<form action="/posts/<%= <hh user=post>.id %>/edit" method="post">
+  <input name="_method" type="hidden" value="put" />
+  <label for="title"><strong>Название:</strong></label>
+  <input type="text" name="title" id="title" value="<%= <hh user=post>.title %>">
+  
+  <label for="body"><strong>Тело страницы:</strong></label>
+  <textarea id="body" name="body" style="height: 250px;"><%= <hh user=post>.body %></textarea>
+  
+  <input id="post_submit" name="commit" type="submit" value="Сохранить">
+</form>

@@ -1,8 +1,12 @@
-source 'https://rubygems.org'
-
-gem 'rake'
-gem 'sinatra'
-gem 'sinatra-contrib'
-gem 'shotgun'
-gem 'thin'
-gem 'activesupport', '4.1.4'
+source :rubygems
+ 
+gem "sinatra"
+gem "shotgun"
+gem "cucumber"
+gem "capybara"
+gem "rspec"
+gem "data_mapper"
+gem "json"
+gem "carrierwave"
+gem "carrierwave-datamapper"
+gem "dm-sqlite-adapter"
