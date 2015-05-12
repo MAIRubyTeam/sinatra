@@ -95,7 +95,7 @@ Ext.define('MyApp.view.main.Main', {
             },
             columns: [
                 { text: 'Номер полиса', dataIndex: 'number_of_policy'},
-                { text: 'ФИО', dataIndex: 'name'}
+                { text: 'ФИО', dataIndex: 'name', flex: 1}
             ]
         }]
     }
