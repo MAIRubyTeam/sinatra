@@ -2,7 +2,7 @@ Ext.define('Hospital.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires:[
         'Ext.layout.container.Fit',
-        'Hospital.view.Main'
+        'Hospital.view.Pacient'
     ],
 
     layout: {
@@ -10,6 +10,6 @@ Ext.define('Hospital.view.Viewport', {
     },
 
     items: [{
-        xtype: 'app-main'
+        xtype: 'app-pacient'
     }]
 });
