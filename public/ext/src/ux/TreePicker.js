@@ -52,17 +52,19 @@ Ext.define('Ext.ux.TreePicker', {
    
     editable: false,
 
-    /**
-     * @event select
-     * Fires when a tree node is selected
-     * @param {Ext.ux.TreePicker} picker        This tree picker
-     * @param {Ext.data.Model} record           The selected record
-     */
-
     initComponent: function() {
         var me = this;
-
         me.callParent(arguments);
+
+        me.addEvents(
+            /**
+             * @event select
+             * Fires when a tree node is selected
+             * @param {Ext.ux.TreePicker} picker        This tree picker
+             * @param {Ext.data.Model} record           The selected record
+             */
+            'select'
+        );
 
         me.mon(me.store, {
             scope: me,
@@ -128,13 +130,32 @@ Ext.define('Ext.ux.TreePicker', {
     },
 
     /**
+     * Aligns the picker to the input element
+     */
+    alignPicker: function() {
+        var me = this,
+            picker;
+
+        if (me.isExpanded) {
+            picker = me.getPicker();
+            if (me.matchFieldWidth) {
+                // Auto the height (it will be constrained by max height)
+                picker.setWidth(me.bodyEl.getWidth());
+            }
+            if (picker.isFloating()) {
+                me.doAlign();
+            }
+        }
+    },
+
+    /**
      * Handles a click even on a tree node
      * @private
      * @param {Ext.tree.View} view
      * @param {Ext.data.Model} record
      * @param {HTMLElement} node
      * @param {Number} rowIndex
-     * @param {Ext.event.Event} e
+     * @param {Ext.EventObject} e
      */
     onItemClick: function(view, record, node, rowIndex, e) {
         this.selectItem(record);
@@ -143,7 +164,7 @@ Ext.define('Ext.ux.TreePicker', {
     /**
      * Handles a keypress event on the picker element
      * @private
-     * @param {Ext.event.Event} e
+     * @param {Ext.EventObject} e
      * @param {HTMLElement} el
      */
     onPickerKeypress: function(e, el) {
@@ -162,8 +183,10 @@ Ext.define('Ext.ux.TreePicker', {
     selectItem: function(record) {
         var me = this;
         me.setValue(record.getId());
-        me.fireEvent('select', me, record);
-        me.collapse();
+        me.picker.hide();
+        me.inputEl.focus();
+        me.fireEvent('select', me, record)
+
     },
 
     /**
@@ -184,10 +207,14 @@ Ext.define('Ext.ux.TreePicker', {
         }
         
         if (!node) {
-            node = store.getRoot();
+            node = store.getRootNode();
         }
         
         picker.selectPath(node.getPath());
+
+        Ext.defer(function() {
+            picker.getView().focus();
+        }, 1);
     },
 
     /**
@@ -207,9 +234,9 @@ Ext.define('Ext.ux.TreePicker', {
         }
             
         // try to find a record in the store that matches the value
-        record = value ? me.store.getNodeById(value) : me.store.getRoot();
+        record = value ? me.store.getNodeById(value) : me.store.getRootNode();
         if (value === undefined) {
-            record = me.store.getRoot();
+            record = me.store.getRootNode();
             me.value = record.getId();
         } else {
             record = me.store.getNodeById(value);

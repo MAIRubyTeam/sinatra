@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * This is the base class for {@link Ext.tip.QuickTip} and {@link Ext.tip.ToolTip} that provides the basic layout and
  * positioning that all tip-based classes require. This class can be used directly for simple, statically-positioned
@@ -6,7 +26,6 @@
  */
 Ext.define('Ext.tip.Tip', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.tip',
 
     alternateClassName: 'Ext.Tip',
 
@@ -28,7 +47,7 @@ Ext.define('Ext.tip.Tip', {
     minWidth : 40,
     /**
      * @cfg {Number} maxWidth
-     * The maximum width of the tip in pixels.
+     * The maximum width of the tip in pixels.  The maximum supported value is 500.
      */
     maxWidth : 500,
     /**
@@ -55,6 +74,10 @@ Ext.define('Ext.tip.Tip', {
     autoRender: true,
     hidden: true,
     baseCls: Ext.baseCSSPrefix + 'tip',
+    floating: {
+        shadow: true,
+        shim: true
+    },
     focusOnToFront: false,
 
     /**
@@ -73,6 +96,8 @@ Ext.define('Ext.tip.Tip', {
      * which will invoke the approriate closeAction.
      */
     closeAction: 'hide',
+
+    ariaRole: 'tooltip',
 
     // Flag to Renderable to always look up the framing styles for this Component
     alwaysFramed: true,
@@ -113,22 +138,20 @@ Ext.define('Ext.tip.Tip', {
         }
     },
 
-    privates: {
-        /**
-         * @private
-         * Set Tip draggable using base Component's draggability.
-         */
-        initDraggable: function () {
-            var me = this;
-            me.draggable = {
-                el: me.getDragEl(),
-                delegate: me.header.el,
-                constrain: me,
-                constrainTo: me.el.dom.parentNode
-            };
-            // Important: Bypass Panel's initDraggable. Call direct to Component's implementation.
-            Ext.Component.prototype.initDraggable.call(me);
-        }
+    /**
+     * @private
+     * Set Tip draggable using base Component's draggability.
+     */
+    initDraggable : function(){
+        var me = this;
+        me.draggable = {
+            el: me.getDragEl(),
+            delegate: me.header.el,
+            constrain: me,
+            constrainTo: me.el.dom.parentNode
+        };
+        // Important: Bypass Panel's initDraggable. Call direct to Component's implementation.
+        Ext.Component.prototype.initDraggable.call(me);
     },
 
     // Tip does not ghost. Drag is "live"

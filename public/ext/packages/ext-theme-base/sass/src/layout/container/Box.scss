@@ -1,6 +1,6 @@
 .#{$prefix}box-layout-ct {
     overflow: hidden;
-    position: relative;
+    zoom: 1;
 }
 
 .#{$prefix}box-target {
@@ -30,40 +30,45 @@
 
 .#{$prefix}box-inner {
     overflow:hidden;
+
+    zoom:1;
+
     position:relative;
     left:0;
     top:0;
 }
 
-.#{$prefix}box-scroller {
-    position: absolute;
-    background-repeat: no-repeat;
-    background-position: center;
-    line-height: 0;
-    font-size: 0;
-}
-
-.#{$prefix}box-scroller-top {
-    top: 0;
-}
-
-.#{$prefix}box-scroller-right {
-    right: 0;
-}
-
-.#{$prefix}box-scroller-bottom {
-    bottom: 0;
-}
-
-.#{$prefix}box-scroller-left {
-    left: 0;
-}
-
-.#{$prefix}box-menu-body-horizontal {
+.#{$prefix}horizontal-box-overflow-body {
     float: left;
+}
+
+.#{$prefix}box-scroller {
+    position: relative;
+    background-repeat: no-repeat;
+}
+
+.#{$prefix}box-scroller-left,
+.#{$prefix}box-scroller-right {
+    float: left;
+    height: 100%;
+    z-index: 5;
+}
+
+.#{$prefix}box-scroller-top,
+.#{$prefix}box-scroller-bottom {
+    .#{$prefix}box-scroller {
+        line-height: 0;
+        font-size: 0;
+        background-position: center 0;
+    }
 }
 
 .#{$prefix}box-menu-after {
-    position: relative;
-    float: left;
+    float: right;
+}
+
+@if $include-rtl {
+    .#{$prefix}rtl.#{$prefix}box-menu-after {
+        float: left;
+    }
 }

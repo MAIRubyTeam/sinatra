@@ -1,7 +1,7 @@
 /**
  * Creates a visual theme for a Ext.tip.Tip
  *
- * @param {string} $ui
+ * @param {string} $ui-label
  * The name of the UI being created. Can not included spaces or special punctuation
  * (used in CSS class names).
  *
@@ -27,7 +27,7 @@
  * @param {string} [$ui-tool-background-image=$tip-tool-background-image]
  * The sprite to use for the header {@link Ext.panel.Tool Tools}
  *
- * @param {number/list} [$ui-header-padding=$tip-header-padding]
+ * @param {number/list} [$ui-header-body-padding=$tip-header-body-padding]
  * The padding of the Tip header's body element
  *
  * @param {color} [$ui-header-color=$tip-header-color]
@@ -63,7 +63,7 @@
  * @member Ext.tip.Tip
  */
 @mixin extjs-tip-ui(
-    $ui: null,
+    $ui-label,
     $ui-border-color: $tip-border-color,
     $ui-border-width: $tip-border-width,
     $ui-border-radius: $tip-border-radius,
@@ -72,7 +72,7 @@
 
     $ui-tool-spacing: $tip-tool-spacing,
     $ui-tool-background-image: $tip-tool-background-image,
-    $ui-header-padding: $tip-header-padding,
+    $ui-header-body-padding: $tip-header-body-padding,
     $ui-header-color: $tip-header-color,
     $ui-header-font-size: $tip-header-font-size,
     $ui-header-font-weight: $tip-header-font-weight,
@@ -83,24 +83,12 @@
     $ui-body-link-color: $tip-body-link-color,
 
     $ui-inner-border-width: 0,
-    $ui-inner-border-color: #fff,
-
-    // deprecated - use $ui instead
-    $ui-label: null
+    $ui-inner-border-color: #fff
 ) {
-    @if $ui == null {
-        @if $ui-label != null {
-            @warn '$ui-label is deprecated.  Use $ui instead';
-            $ui: $ui-label;
-        } @else {
-            @warn "#{error('$ui is required')}";
-        }
-    }
-
-    @if not is-null($ui-border-radius) and $ui-border-radius != 0 {
+    @if $ui-border-radius != null {
         @include x-frame(
             $cls: 'tip',
-            $ui: '#{$ui}',
+            $ui: '#{$ui-label}',
             $border-radius: $ui-border-radius,
             $border-width: $ui-border-width,
             $background-color: $ui-background-color,
@@ -109,7 +97,7 @@
         );
     }
 
-    .#{$prefix}tip-#{$ui} {
+    .#{$prefix}tip-#{$ui-label} {
         border-color: $ui-border-color;
         @if $ui-inner-border-width != 0 {
             @include inner-border(
@@ -122,7 +110,7 @@
             @if $ui-tool-background-image != $tool-background-image {
                 background-image: theme-background-image($ui-tool-background-image);
             }
-            @if is-null($ui-background-gradient) {
+            @if $ui-background-gradient == null {
                 // EXTJSIV-8846: partially transparent png images do not display correctly
                 // in winXP/IE8m when the image element has a transparent background.
                 // to fix this, we give the element the same background-color as the tooltip.
@@ -132,7 +120,7 @@
     }
 
     $ui-tool-margin: 0 0 0 $ui-tool-spacing;
-    .#{$prefix}tip-header-#{$ui} {
+    .#{$prefix}tip-header-#{$ui-label} {
         .#{$prefix}tool-after-title {
             margin: $ui-tool-margin;
         }
@@ -154,17 +142,17 @@
         }
     }
 
-    .#{$prefix}tip-header-#{$ui} {
-        padding: $ui-header-padding;
+    .#{$prefix}tip-header-body-#{$ui-label} {
+        padding: $ui-header-body-padding;
     }
 
-    .#{$prefix}tip-header-title-#{$ui} {
+    .#{$prefix}tip-header-text-container-#{$ui-label} {
         color: $ui-header-color;
         font-size: $ui-header-font-size;
         font-weight: $ui-header-font-weight;
     }
 
-    .#{$prefix}tip-body-#{$ui} {
+    .#{$prefix}tip-body-#{$ui-label} {
         padding: $ui-body-padding;
         color: $ui-body-color;
         font-size: $ui-body-font-size;
@@ -187,6 +175,15 @@
     border-style: solid;
     border-width: 5px;
     border-color: $tip-border-color;
+
+    zoom: 1;
+    
+    @if $include-content-box {
+        .#{$prefix}content-box & {
+            height: 0;
+            width: 0;
+        }
+    }
 }
 
 .#{$prefix}tip-anchor-top {
@@ -243,14 +240,14 @@
 
 @if $include-tip-default-ui {
     @include extjs-tip-ui(
-        $ui: 'default'
+        $ui-label: 'default'
     );
 }
 
 @if $include-ext-form-field-base {
     @if $include-tip-form-invalid-ui {
         @include extjs-tip-ui(
-            $ui: 'form-invalid',
+            $ui-label: 'form-invalid',
             $ui-border-color: $tip-error-border-color,
             $ui-border-width: $tip-error-border-width,
             $ui-border-radius: $tip-error-border-radius,

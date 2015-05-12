@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * Simple helper class for easily creating image components. This renders an image tag to
  * the DOM with the configured src.
@@ -15,7 +35,7 @@
  *     changingImage.setSrc('http://www.sencha.com/img/20110215-feat-perf.png');
  *
  * By default, only an img element is rendered and that is this component's primary
- * {@link Ext.Component#getEl element}. If the {@link Ext.Component#autoEl} property
+ * {@link Ext.AbstractComponent#getEl element}. If the {@link Ext.AbstractComponent#autoEl} property
  * is other than 'img' (the default), the a child img element will be added to the primary
  * element. This can be used to create a wrapper element around the img.
  *
@@ -69,10 +89,6 @@ Ext.define('Ext.Img', {
      * the `@` symbol. For example '65@My Font Family'.
      */
 
-    ariaRole: 'img',
-    
-    maskOnDisable: false,
-
     initComponent: function() {
         if (this.glyph) {
             this.autoEl = 'div';
@@ -82,7 +98,6 @@ Ext.define('Ext.Img', {
 
     getElConfig: function() {
         var me = this,
-            autoEl = me.autoEl,
             config = me.callParent(),
             glyphFontFamily = Ext._glyphFontFamily,
             glyph = me.glyph,
@@ -90,23 +105,21 @@ Ext.define('Ext.Img', {
 
         // It is sometimes helpful (like in a panel header icon) to have the img wrapped
         // by a div. If our autoEl is not 'img' then we just add an img child to the el.
-        if (autoEl === 'img' || (Ext.isObject(autoEl) && autoEl.tag === 'img')) {
+        if (me.autoEl == 'img') {
             img = config;
         } else if (me.glyph) {
             if (typeof glyph === 'string') {
                 glyphParts = glyph.split('@');
                 glyph = glyphParts[0];
-                glyphFontFamily = glyphParts[1] || glyphFontFamily;
+                glyphFontFamily = glyphParts[1];
             }
             config.html = '&#' + glyph + ';';
             if (glyphFontFamily) {
-                config.style = config.style || {};
-                config.style.fontFamily = glyphFontFamily;
+                config.style = 'font-family:' + glyphFontFamily;
             }
         } else {
             config.cn = [img = {
                 tag: 'img',
-                role: me.ariaRole,
                 id: me.id + '-img'
             }];
         }
@@ -131,19 +144,12 @@ Ext.define('Ext.Img', {
 
     onRender: function () {
         var me = this,
-            autoEl = me.autoEl,
             el;
 
         me.callParent(arguments);
 
         el = me.el;
-        
-        if (autoEl === 'img' || (Ext.isObject(autoEl) && autoEl.tag === 'img')) {
-            me.imgEl = el;
-        }
-        else {
-            me.imgEl = el.getById(me.id + '-img');
-        }
+        me.imgEl = (me.autoEl == 'img') ? el : el.getById(me.id + '-img');
     },
 
     onDestroy: function () {
@@ -167,28 +173,23 @@ Ext.define('Ext.Img', {
         }
     },
 
-    /**
-     * Updates the {@link #glyph} of the image.
-     * @param {Number/String} glyph
-     */
     setGlyph: function(glyph) {
         var me = this,
             glyphFontFamily = Ext._glyphFontFamily,
-            old = me.glyph,
-            el = me.el,
-            glyphParts;
+            glyphParts, dom;
 
-        me.glyph = glyph;
-        if (me.rendered && glyph != old) {
+        if (glyph != me.glyph) {
             if (typeof glyph === 'string') {
                 glyphParts = glyph.split('@');
                 glyph = glyphParts[0];
-                glyphFontFamily = glyphParts[1] || glyphFontFamily;
+                glyphFontFamily = glyphParts[1];
             }
 
-            el.dom.innerHTML = '&#' + glyph + ';';
+            dom = me.el.dom;
+
+            dom.innerHTML = '&#' + glyph + ';';
             if (glyphFontFamily) {
-                el.setStyle('font-family', glyphFontFamily);
+                dom.style = 'font-family:' + glyphFontFamily;
             }
         }
     }

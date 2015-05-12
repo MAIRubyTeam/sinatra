@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * This is a layout that manages multiple Panels in an expandable accordion style such that by default only
  * one Panel can be expanded at any given time (set {@link #multi} config to have more open). Each Panel has
@@ -36,17 +56,13 @@
  */
 Ext.define('Ext.layout.container.Accordion', {
     extend: 'Ext.layout.container.VBox',
-    alias: 'layout.accordion',
-    type: 'accordion',
-
+    alias: ['layout.accordion'],
     alternateClassName: 'Ext.layout.AccordionLayout',
 
     targetCls: Ext.baseCSSPrefix + 'accordion-layout-ct',
     itemCls: [Ext.baseCSSPrefix + 'box-item', Ext.baseCSSPrefix + 'accordion-item'],
 
     align: 'stretch',
-
-    enableSplitters: false,
 
     /**
      * @cfg {Boolean} fill
@@ -80,7 +96,7 @@ Ext.define('Ext.layout.container.Accordion', {
     /**
      * @cfg {Boolean} collapseFirst
      * True to make sure the collapse/expand toggle button always renders first (to the left of) any other tools
-     * in the contained Panels' title bars, false to render it last. By default, this will use the
+     * in the contained Panels' title bars, false to render it last. By default, this will use the 
      * {@link Ext.panel.Panel#collapseFirst} setting on the panel. If the config option is specified on the layout,
      * it will override the panel value.
      */
@@ -106,9 +122,7 @@ Ext.define('Ext.layout.container.Accordion', {
      * Set to true to enable multiple accordion items to be open at once.
      */
     multi: false,
-
-    panelCollapseMode: 'header',
-
+    
     defaultAnimatePolicy: {
         y: true,
         height: true
@@ -119,18 +133,8 @@ Ext.define('Ext.layout.container.Accordion', {
 
         me.callParent(arguments);
 
-        if (me.animate) {
-            me.animatePolicy = {};
-
-            /* Animate our parallel dimension and position.
-               So in the default vertical accordion, this will be
-                {
-                    y: true,
-                    height: true
-                }
-            */
-            me.animatePolicy[me.names.x] = true;
-            me.animatePolicy[me.names.width] = true;
+        if (!me.multi && me.animate) {
+            me.animatePolicy = Ext.apply({}, me.defaultAnimatePolicy);
         } else {
             me.animatePolicy = null;
         }
@@ -139,21 +143,22 @@ Ext.define('Ext.layout.container.Accordion', {
     beforeRenderItems: function (items) {
         var me = this,
             ln = items.length,
+            i = 0,
             owner = me.owner,
             collapseFirst = me.collapseFirst,
             hasCollapseFirst = Ext.isDefined(collapseFirst),
             expandedItem = me.getExpanded(true)[0],
             multi = me.multi,
-            comp, i;
+            comp;
 
-        for (i = 0; i < ln; i++) {
+        for (; i < ln; i++) {
             comp = items[i];
             if (!comp.rendered) {
                 // Set up initial properties for Panels in an accordion.
                 if (!multi || comp.collapsible !== false) {
                     comp.collapsible = true;
                 }
-
+                
                 if (comp.collapsible) {
                     if (hasCollapseFirst) {
                         comp.collapseFirst = collapseFirst;
@@ -167,8 +172,9 @@ Ext.define('Ext.layout.container.Accordion', {
                         comp.titleCollapse = me.titleCollapse;
                     }
                 }
-
-                comp.hideHeader = comp.width = null;
+                
+                delete comp.hideHeader;
+                delete comp.width;
                 comp.title = comp.title || '&#160;';
                 comp.addBodyCls(Ext.baseCSSPrefix + 'accordion-body');
 
@@ -185,17 +191,22 @@ Ext.define('Ext.layout.container.Accordion', {
                     }
 
                     // If only one child Panel may be expanded, then intercept expand/show requests.
-                    owner.mon(comp, 'show', me.onComponentShow, me);
+                    owner.mon(comp, {
+                        show: me.onComponentShow,
+                        beforeexpand: me.onComponentExpand,
+                        beforecollapse: me.onComponentCollapse,
+                        scope: me
+                    });
                 }
                 // Need to still check this outside multi because we don't want
                 // a single item to be able to collapse
+                owner.mon(comp, 'beforecollapse', me.onComponentCollapse, me);
                 comp.headerOverCls = Ext.baseCSSPrefix + 'accordion-hd-over';
             }
         }
 
-        // If no collapsed:false Panels found, make the first one expanded, only if we're
-        // not during an expand/collapse
-        if (!me.processing && !multi) {
+        // If no collapsed:false Panels found, make the first one expanded.
+        if (!multi) {
             if (!expandedItem) {
                 if (ln) {
                     items[0].collapsed = false;
@@ -224,12 +235,9 @@ Ext.define('Ext.layout.container.Accordion', {
     configureItem: function(item) {
         this.callParent(arguments);
 
-        // Accordion headers are immune to dock layout's border-management rules
-        item.ignoreHeaderBorderManagement = true;
-
         // We handle animations for the expand/collapse of items.
         // Items do not have individual borders
-        item.animCollapse = false;
+        item.animCollapse = item.border = false;
 
         // If filling available space, all Panels flex.
         if (this.fill) {
@@ -272,44 +280,41 @@ Ext.define('Ext.layout.container.Accordion', {
     // When a Component expands, adjust the heights of the other Components to be just enough to accommodate
     // their headers.
     // The expanded Component receives the only flex value, and so gets all remaining space.
-    onBeforeComponentExpand: function(toExpand) {
+    onComponentExpand: function(toExpand) {
         var me = this,
             owner = me.owner,
             multi = me.multi,
+            animate = me.animate,
             moveToTop = !multi && !me.animate && me.activeOnTop,
             expanded,
-            previousValue, anim;
+            expandedCount, i,
+            previousValue;
 
         if (!me.processing) {
             me.processing = true;
             previousValue = owner.deferLayouts;
             owner.deferLayouts = true;
+            expanded = multi ? [] : me.getExpanded();
+            expandedCount = expanded.length;
             
-            if (!multi) {
-                expanded = me.getExpanded()[0];
-                if (expanded && expanded !== toExpand) {
-                    anim = expanded.$layoutAnim;
-                    // If the item is animating, finish it.
-                    if (anim) {
-                        anim.jumpToEnd();
-                    }
-                    expanded.collapse();
-                }
+            // Collapse all other expanded child items (Won't loop if multi is true)
+            for (i = 0; i < expandedCount; i++) {
+                expanded[i].collapse();
             }
-
+            
             if (moveToTop) {
                 // Prevent extra layout when moving the item
                 Ext.suspendLayouts();
                 owner.insert(0, toExpand);
                 Ext.resumeLayouts();
             }
-
+            
             owner.deferLayouts = previousValue;
             me.processing = false;
         }
     },
 
-    onBeforeComponentCollapse: function(comp) {
+    onComponentCollapse: function(comp) {
         var me = this,
             owner = me.owner,
             toExpand,
@@ -347,46 +352,10 @@ Ext.define('Ext.layout.container.Accordion', {
     },
 
     onComponentShow: function(comp) {
-        this.onBeforeComponentExpand(comp);
+        // Showing a Component means that you want to see it, so expand it.
+        this.onComponentExpand(comp);
     },
-
-    onAdd: function (item) {
-        var me = this;
-
-        me.callParent(arguments);
-
-        if (item.collapseMode === 'placeholder') {
-            item.collapseMode = me.panelCollapseMode;
-        }
-
-        item.collapseDirection = item.headerPosition;
-
-        // If we add to an accordion after its is has run once we need to make sure
-        // new items are collapsed on entry. The item is also in the collection now,
-        // so only collapse it if we have more than 1.
-        if (me.layoutCount && !me.multi && me.owner.items.getCount() > 1) {
-            // If we get here, we must already have something expanded, so we don't
-            // want to react here.
-            me.processing = true;
-            item.collapse();
-            me.processing = false
-        }
-    },
-
-    onRemove: function(panel, destroying){
-        var me = this,
-            item;
-            
-        me.callParent(arguments);
-        
-        if (!me.owner.destroying && !me.multi && !panel.collapsed) {
-            item = me.owner.items.first();
-            if (item) {
-                item.expand();
-            }
-        }
-    },
-
+    
     getExpanded: function(explicitCheck){
         var items = this.owner.items.items,
             len = items.length,
@@ -394,28 +363,19 @@ Ext.define('Ext.layout.container.Accordion', {
             out = [],
             add,
             item;
-
+            
         for (; i < len; ++i) {
             item = items[i];
-
-            if (!item.hidden) {
-                if (explicitCheck) {
-                    add = item.hasOwnProperty('collapsed') && item.collapsed === false;
-                } else {
-                    add = !item.collapsed;
-                }
-                if (add) {
-                    out.push(item);
-                }
+            if (explicitCheck) {
+                add = item.hasOwnProperty('collapsed') && item.collapsed === false;
+            } else {
+                add = !item.collapsed;
+            }
+            if (add) {
+                out.push(item);
             }
         }
         return out;
-
-    },
-
-    // No need to run an extra layout since everything has already achieved the
-    // desired size when using an accordion.
-    afterCollapse: Ext.emptyFn,
-
-    afterExpand: Ext.emptyFn
+            
+    }
 });

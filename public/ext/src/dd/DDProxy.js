@@ -1,4 +1,24 @@
 /*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
+/*
  * This is a derivative of the similarly named class in the YUI Library.
  * The original license:
  * Copyright (c) 2006, Yahoo! Inc. All rights reserved.
@@ -72,7 +92,7 @@ Ext.define('Ext.dd.DDProxy', {
             s;
 
         if (!body || !body.firstChild) {
-            Ext.defer( function() { self.createFrame(); }, 50 );
+            setTimeout( function() { self.createFrame(); }, 50 );
             return;
         }
 
@@ -81,7 +101,6 @@ Ext.define('Ext.dd.DDProxy', {
         if (!div) {
             div    = document.createElement("div");
             div.id = this.dragElId;
-            div.setAttribute('role', 'presentation');
             s  = div.style;
 
             s.position   = "absolute";
@@ -151,10 +170,8 @@ Ext.define('Ext.dd.DDProxy', {
 
     // overrides Ext.dd.DragDrop
     b4MouseDown: function(e) {
-        var xy = e.getXY(),
-            x = xy[0],
-            y = xy[1];
-
+        var x = e.getPageX(),
+            y = e.getPageY();
         this.autoOffset(x, y);
         this.setDragElPos(x, y);
     },

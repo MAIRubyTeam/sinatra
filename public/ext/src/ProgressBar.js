@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * An updateable progress bar component. The progress bar supports two different modes: manual and automatic.
  *
@@ -41,25 +61,13 @@ Ext.define('Ext.ProgressBar', {
 
     uses: ['Ext.fx.Anim'],
 
-    config: {
-        /**
-         * @cfg {Number} [value=0]
-         * A floating point value between 0 and 1 (e.g., .5)
-         */
-        value: 0,
-
-        /**
-         * @cfg {String/Ext.XTemplate} [textTpl]
-         * A template used to create this ProgressBar's background text given two values:
-         *
-         *    `value  ' - The raw progress value between 0 and 1
-         *    'percent' - The value as a percentage between 0 and 100
-         */
-        textTpl: null
-    },
+   /**
+    * @cfg {Number} [value=0]
+    * A floating point value between 0 and 1 (e.g., .5)
+    */
 
    /**
-    * @cfg {String/HTMLElement/Ext.dom.Element} textEl
+    * @cfg {String/HTMLElement/Ext.Element} textEl
     * The element to render the progress text to (defaults to the progress bar's internal text element)
     */
 
@@ -94,13 +102,11 @@ Ext.define('Ext.ProgressBar', {
         'bar'
     ],
 
-    defaultBindProperty: 'value',
-
     renderTpl: [
         '<tpl if="internalText">',
             '<div class="{baseCls}-text {baseCls}-text-back">{text}</div>',
         '</tpl>',
-        '<div id="{id}-bar" data-ref="bar" class="{baseCls}-bar {baseCls}-bar-{ui}" role="presentation" style="width:{percentage}%">',
+        '<div id="{id}-bar" class="{baseCls}-bar {baseCls}-bar-{ui}" style="width:{percentage}%">',
             '<tpl if="internalText">',
                 '<div class="{baseCls}-text">',
                     '<div>{text}</div>',
@@ -110,16 +116,22 @@ Ext.define('Ext.ProgressBar', {
     ],
 
     componentLayout: 'progressbar',
-    
-    ariaRole: 'progressbar',
 
-    /**
-     * @event update
-     * Fires after each update interval
-     * @param {Ext.ProgressBar} this
-     * @param {Number} value The current progress value
-     * @param {String} text The current progress text
-     */
+    // private
+    initComponent: function() {
+        this.callParent();
+
+        this.addEvents(
+            /**
+             * @event update
+             * Fires after each update interval
+             * @param {Ext.ProgressBar} this
+             * @param {Number} value The current progress value
+             * @param {String} text The current progress text
+             */
+            "update"
+        );
+    },
 
     initRenderData: function() {
         var me = this;
@@ -148,18 +160,10 @@ Ext.define('Ext.ProgressBar', {
         }
     },
 
-    updateValue: function(value) {
-        this.updateProgress(value, Math.round(value * 100) + '%');
-    },
-
     /**
-     * Updates the progress bar value, and optionally its text.
-     * 
-     * If the text argument is not specified, then the {@link #textTpl} will be used to generate the text.
-     * If there is no `textTpl`, any existing text value will be unchanged. To blank out existing text, pass `""`.
-     *
-     * Note that even if the progress bar value exceeds 1, it will never automatically reset --
-     * you are responsible for determining when the progress is complete and
+     * Updates the progress bar value, and optionally its text. If the text argument is not specified, any existing text
+     * value will be unchanged. To blank out existing text, pass ''. Note that even if the progress bar value exceeds 1,
+     * it will never automatically reset -- you are responsible for determining when the progress is complete and
      * calling {@link #reset} to clear and/or hide the control.
      * @param {Number} [value=0] A floating point value between 0 and 1 (e.g., .5)
      * @param {String} [text=''] The string to display in the progress text element
@@ -169,22 +173,11 @@ Ext.define('Ext.ProgressBar', {
      */
     updateProgress: function(value, text, animate) {
         var me = this,
-            oldValue = me.value,
-            textTpl = me.getTextTpl();
+            oldValue = me.value;
 
-        // Ensure value is not undefined.
-        me.value = value || (value = 0);
-
-        // Empty string (falsy) must blank out the text as per docs.
-        if (text != null) {
+        me.value = value || 0;
+        if (text) {
             me.updateText(text);
-        }
-        // Generate text using template and progress values.
-        else if (textTpl) {
-            me.updateText(textTpl.apply({
-                value: value,
-                percent: value * 100
-            }));
         }
         if (me.rendered && !me.isDestroyed) {
             if (animate === true || (animate !== false && me.animate)) {
@@ -194,14 +187,14 @@ Ext.define('Ext.ProgressBar', {
                         width: (oldValue * 100) + '%'
                     },
                     to: {
-                        width: (value * 100) + '%'
+                        width: (me.value * 100) + '%'
                     }
                 }, me.animate));
             } else {
-                me.bar.setStyle('width', (value * 100) + '%');
+                me.bar.setStyle('width', (me.value * 100) + '%');
             }
         }
-        me.fireEvent('update', me, value, text);
+        me.fireEvent('update', me, me.value, text);
         return me;
     },
 
@@ -216,16 +209,9 @@ Ext.define('Ext.ProgressBar', {
         
         me.text = text;
         if (me.rendered) {
-            me.textEl.setHtml(me.text);
+            me.textEl.update(me.text);
         }
         return me;
-    },
-
-    applyTextTpl: function(textTpl) {
-        if (!textTpl.isTemplate) {
-            textTpl = new Ext.XTemplate(textTpl);
-        }
-        return textTpl;
     },
 
     applyText : function(text) {

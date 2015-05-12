@@ -67,7 +67,7 @@ Ext.define('Ext.ux.LiveSearchGridPanel', {
                      change: {
                          fn: me.onTextFieldChange,
                          scope: this,
-                         buffer: 500
+                         buffer: 100
                      }
                  }
             }, {
@@ -117,6 +117,9 @@ Ext.define('Ext.ux.LiveSearchGridPanel', {
     // DEL ASCII code
     tagsProtect: '\x0f',
     
+    // detects regexp reserved word
+    regExpProtect: /\\|\/|\+|\\|\.|\[|\]|\{|\}|\?|\$|\*|\^|\|/gm,
+    
     /**
      * In normal mode it returns the value with protected regexp characters.
      * In regular expression mode it returns the raw value except if the regexp is invalid.
@@ -131,7 +134,9 @@ Ext.define('Ext.ux.LiveSearchGridPanel', {
             return null;
         }
         if (!me.regExpMode) {
-            value = Ext.String.escapeRegex(value);
+            value = value.replace(me.regExpProtect, function(m) {
+                return '\\' + m;
+            });
         } else {
             try {
                 new RegExp(value);
@@ -157,12 +162,9 @@ Ext.define('Ext.ux.LiveSearchGridPanel', {
      */
      onTextFieldChange: function() {
          var me = this,
-             count = 0,
-             view = me.view,
-             cellSelector = view.cellSelector,
-             innerSelector = view.innerSelector;
+             count = 0;
 
-         view.refresh();
+         me.view.refresh();
          // reset the statusbar
          me.statusBar.setStatus({
              text: me.defaultStatusText,
@@ -174,14 +176,14 @@ Ext.define('Ext.ux.LiveSearchGridPanel', {
          me.currentIndex = null;
 
          if (me.searchValue !== null) {
-             me.searchRegExp = new RegExp(me.getSearchValue(), 'g' + (me.caseSensitive ? '' : 'i'));
+             me.searchRegExp = new RegExp(me.searchValue, 'g' + (me.caseSensitive ? '' : 'i'));
              
              
              me.store.each(function(record, idx) {
-                 var td = Ext.fly(view.getNode(idx)).down(cellSelector),
+                 var td = Ext.fly(me.view.getNode(idx)).down('td'),
                      cell, matches, cellHTML;
-                 while (td) {
-                     cell = td.down(innerSelector);
+                 while(td) {
+                     cell = td.down('.x-grid-cell-inner');
                      matches = cell.dom.innerHTML.match(me.tagsRe);
                      cellHTML = cell.dom.innerHTML.replace(me.tagsRe, me.tagsProtect);
                      
@@ -221,6 +223,7 @@ Ext.define('Ext.ux.LiveSearchGridPanel', {
              me.getSelectionModel().deselectAll();
          }
 
+         // force textfield focus
          me.textField.focus();
      },
     

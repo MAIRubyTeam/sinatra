@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * A display-only text field which is not validated and not submitted. This is useful for when you want to display a
  * value from a form's {@link Ext.form.Basic#load loaded data} but do not want to allow the user to edit or submit that
@@ -37,20 +57,15 @@ Ext.define('Ext.form.field.Display', {
     alias: 'widget.displayfield',
     requires: ['Ext.util.Format', 'Ext.XTemplate'],
     alternateClassName: ['Ext.form.DisplayField', 'Ext.form.Display'],
-    
-    ariaRole: 'textbox',
-    
     fieldSubTpl: [
-        '<div id="{id}" role="{role}" {inputAttrTpl}',
+        '<div id="{id}" role="input" ',
         '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>', 
-        ' class="{fieldCls} {fieldCls}-{ui}">{value}</div>',
+        ' class="{fieldCls}">{value}</div>',
         {
             compiled: true,
             disableFormats: true
         }
     ],
-    
-    focusable: false,
 
     /**
      * @cfg {Boolean} readOnly
@@ -94,26 +109,18 @@ Ext.define('Ext.form.field.Display', {
     initEvents: Ext.emptyFn,
 
     submitValue: false,
-
-    getValue: function() {
-        return this.value;
-    },
-    
-    valueToRaw: function(value) {
-        if (value || value === 0 || value === false) {
-            return value;
-        } else {
-            return '';
-        }
-    },
     
     isDirty: function(){
         return false;
     },
 
-    isValid: Ext.returnTrue,
+    isValid: function() {
+        return true;
+    },
 
-    validate: Ext.returnTrue,
+    validate: function() {
+        return true;
+    },
 
     getRawValue: function() {
         return this.rawValue;
@@ -122,7 +129,7 @@ Ext.define('Ext.form.field.Display', {
     setRawValue: function(value) {
         var me = this;
             
-        value = Ext.valueFrom(value, '');
+        value = Ext.value(value, '');
         me.rawValue = value;
         if (me.rendered) {
             me.inputEl.dom.innerHTML = me.getDisplayValue();
@@ -147,7 +154,7 @@ Ext.define('Ext.form.field.Display', {
         return display;
     },
         
-    getSubTplData: function(fieldData) {
+    getSubTplData: function() {
         var ret = this.callParent(arguments);
 
         ret.value = this.getDisplayValue();

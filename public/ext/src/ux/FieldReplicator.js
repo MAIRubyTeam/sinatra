@@ -13,7 +13,7 @@
  * </code></pre>
  */
 Ext.define('Ext.ux.FieldReplicator', {
-    alias: 'plugin.fieldreplicator',
+    singleton: true,
 
     init: function(field) {
         // Assign the field an id grouping it with fields cloned from it. If it already

@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * This override provides extra, border layout specific methods for `Ext.Component`. The
  * `Ext.layout.container.Border` class requires this override so that the added functions
@@ -72,18 +92,10 @@ Ext.define('Ext.layout.container.border.Region', {
      * `"west"`).
      * @return {String} The previous value of the `region` property.
      */
-    setRegion: function (region) {
+    setBorderRegion: function (region) {
         var me = this,
             borderLayout,
             old = me.region;
-
-        //<debug>
-        if (typeof region !== 'string') {
-            // This method used to be basically the same as setBox, so check for an
-            // accidental use of the old signature.
-            Ext.Error.raise('Use setBox to set the size or position of a component.');
-        }
-        //</debug>
 
         if (region !== old) {
             borderLayout = me.getOwningBorderLayout();
@@ -168,7 +180,7 @@ Ext.define('Ext.layout.container.border.Region', {
      * @param {Number} weight The new `weight` value.
      * @return {Number} The previous value of the `weight` property.
      */
-    setWeight: function (weight) {
+    setRegionWeight: function (weight) {
         var me = this,
             ownerCt = me.getOwningBorderContainer(),
             placeholder = me.placeholder,
@@ -189,11 +201,4 @@ Ext.define('Ext.layout.container.border.Region', {
 
         return old;
     }
-},
-function (Component) {
-    var proto = Component.prototype;
-
-    // Aliases for v4 compat
-    proto.setBorderRegion = proto.setRegion;
-    proto.setRegionWeight = proto.setWeight;
 });

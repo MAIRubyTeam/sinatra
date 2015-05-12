@@ -16,15 +16,9 @@ $horizontal-slider-thumb-height: 15px !default;
 
 /**
  * @var {number}
- * The width of the horizontal slider start cap
+ * The width of the horizontal slider end caps
  */
-$horizontal-slider-start-cap-width: floor($horizontal-slider-thumb-width / 2) !default;
-
-/**
- * @var {number}
- * The width of the horizontal slider end cap
- */
-$horizontal-slider-end-cap-width: ceil($horizontal-slider-thumb-width / 2) !default;
+$horizontal-slider-end-cap-width: 7px !default;
 
 /**
  * @var {number}
@@ -40,12 +34,6 @@ $vertical-slider-thumb-height: 15px !default;
 
 /**
  * @var {number}
- * The height of the vertical slider start cap
+ * The height of the vertical slider end caps
  */
-$vertical-slider-start-cap-height: floor($vertical-slider-thumb-height / 2) !default;
-
-/**
- * @var {number}
- * The height of the vertical slider end cap
- */
-$vertical-slider-end-cap-height: ceil($vertical-slider-thumb-height / 2) !default;
+$vertical-slider-end-cap-height: 7px !default;

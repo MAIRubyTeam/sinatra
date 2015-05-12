@@ -1,1 +1,1 @@
-This folder contains the Models for this application.
+This folder contains the models

@@ -35,7 +35,6 @@ Ext.define('Ext.ux.dd.PanelFieldDragZone', {
 //  node which provides a "view" of the dragged data.
     getDragData: function(e) {
         var targetLabel = e.getTarget('label', null, true),
-            text,
             oldMark,
             field,
             dragEl;
@@ -52,9 +51,8 @@ Ext.define('Ext.ux.dd.PanelFieldDragZone', {
             if (field.isValid()) {
                 field.preventMark = oldMark;
                 dragEl = document.createElement('div');
-                dragEl.className = Ext.baseCSSPrefix + 'form-text';
-                text = field.getRawValue();
-                dragEl.innerHTML = Ext.isEmpty(text) ? '&#160;' : text;
+                dragEl.className = 'x-form-text';
+                dragEl.appendChild(document.createTextNode(field.getRawValue()));
                 Ext.fly(dragEl).setWidth(field.getEl().getWidth());
                 return {
                     field: field,

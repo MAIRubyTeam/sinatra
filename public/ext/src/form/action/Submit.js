@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * A class which handles submission of data from {@link Ext.form.Basic Form}s and processes the returned response.
  *
@@ -99,7 +119,7 @@ Ext.define('Ext.form.action.Submit', {
             form = me.form,
             jsonSubmit = me.jsonSubmit || form.jsonSubmit,
             paramsProp = jsonSubmit ? 'jsonData' : 'params',
-            formInfo;
+            formEl, formInfo;
 
         // For uploads we need to create an actual form that contains the file upload fields,
         // and pass that to the ajax call so it can do its iframe-based submit method.
@@ -143,7 +163,7 @@ Ext.define('Ext.form.action.Submit', {
     getParams: function(useModelValues) {
         var falseVal = false,
             configParams = this.callParent(),
-            fieldParams = this.form.getValues(falseVal, falseVal, this.submitEmptyText !== falseVal, useModelValues, /*isSubmitting*/ true);
+            fieldParams = this.form.getValues(falseVal, falseVal, this.submitEmptyText !== falseVal, useModelValues);
         return Ext.apply({}, fieldParams, configParams);
     },
 
@@ -175,7 +195,8 @@ Ext.define('Ext.form.action.Submit', {
         for (i = 0; i < len; ++i) {
             field = fields[i];
 
-            if (field.isFileUpload()) {
+            // can only have a selected file value after being rendered
+            if (field.rendered && field.isFileUpload()) {
                 uploadFields.push(field);
             }
         }
@@ -197,21 +218,12 @@ Ext.define('Ext.form.action.Submit', {
 
         formSpec = {
             tag: 'form',
-            role: 'presentation',
             action: me.getUrl(),
             method: me.getMethod(),
-            target: me.target ?
-                        (Ext.isString(me.target) ? me.target : Ext.fly(me.target).dom.name) :
-                        '_self',
+            target: me.target || '_self',
             style: 'display:none',
             cn: fieldsSpec
         };
-
-        // <debug>
-        if (!formSpec.target) {
-            Ext.Error.raise('Invalid form target.');
-        }
-        // </debug>
 
         // Set the proper encoding for file uploads
         if (uploadFields.length) {
@@ -253,21 +265,16 @@ Ext.define('Ext.form.action.Submit', {
      */
     onSuccess: function(response) {
         var form = this.form,
-            formActive = form && !form.destroying && !form.isDestroyed,
             success = true,
             result = this.processResponse(response);
-        
         if (result !== true && !result.success) {
-            if (result.errors && formActive) {
+            if (result.errors) {
                 form.markInvalid(result.errors);
             }
             this.failureType = Ext.form.action.Action.SERVER_INVALID;
             success = false;
         }
-        
-        if (formActive) {
-            form.afterAction(this, success);
-        }
+        form.afterAction(this, success);
     },
 
     /**

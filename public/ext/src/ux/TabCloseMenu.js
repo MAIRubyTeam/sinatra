@@ -4,8 +4,6 @@
  * and remove all will not remove items that are not closable.
  */
 Ext.define('Ext.ux.TabCloseMenu', {
-    extend: 'Ext.plugin.Abstract',
-
     alias: 'plugin.tabclosemenu',
 
     mixins: {
@@ -54,11 +52,12 @@ Ext.define('Ext.ux.TabCloseMenu', {
      */
     extraItemsTail: null,
 
-    // TODO - doc this.addEvents('aftermenu','beforemenu');
-
     //public
     constructor: function (config) {
-        this.callParent([config]);
+        this.addEvents(
+            'aftermenu',
+            'beforemenu');
+
         this.mixins.observable.constructor.call(this, config);
     },
 
@@ -81,9 +80,9 @@ Ext.define('Ext.ux.TabCloseMenu', {
         });
     },
 
-    destroy : function(){
-        this.callParent();
+    onBeforeDestroy : function(){
         Ext.destroy(this.menu);
+        this.callParent(arguments);
     },
 
     // private
@@ -96,13 +95,13 @@ Ext.define('Ext.ux.TabCloseMenu', {
             index = me.tabBar.items.indexOf(tab);
 
         me.item = me.tabPanel.getComponent(index);
-        menu.child('#close').setDisabled(!me.item.closable);
+        menu.child('*[text="' + me.closeTabText + '"]').setDisabled(!me.item.closable);
 
         if (me.showCloseAll || me.showCloseOthers) {
             me.tabPanel.items.each(function(item) {
                 if (item.closable) {
                     disableAll = false;
-                    if (item !== me.item) {
+                    if (item != me.item) {
                         disableOthers = false;
                         return false;
                     }
@@ -111,11 +110,11 @@ Ext.define('Ext.ux.TabCloseMenu', {
             });
 
             if (me.showCloseAll) {
-                menu.child('#closeAll').setDisabled(disableAll);
+                menu.child('*[text="' + me.closeAllTabsText + '"]').setDisabled(disableAll);
             }
 
             if (me.showCloseOthers) {
-                menu.child('#closeOthers').setDisabled(disableOthers);
+                menu.child('*[text="' + me.closeOthersTabsText + '"]').setDisabled(disableOthers);
             }
         }
 
@@ -130,7 +129,6 @@ Ext.define('Ext.ux.TabCloseMenu', {
 
         if (!me.menu) {
             var items = [{
-                itemId: 'close',
                 text: me.closeTabText,
                 scope: me,
                 handler: me.onClose
@@ -142,7 +140,6 @@ Ext.define('Ext.ux.TabCloseMenu', {
 
             if (me.showCloseOthers) {
                 items.push({
-                    itemId: 'closeOthers',
                     text: me.closeOthersTabsText,
                     scope: me,
                     handler: me.onCloseOthers
@@ -151,7 +148,6 @@ Ext.define('Ext.ux.TabCloseMenu', {
 
             if (me.showCloseAll) {
                 items.push({
-                    itemId: 'closeAll',
                     text: me.closeAllTabsText,
                     scope: me,
                     handler: me.onCloseAll
@@ -180,6 +176,8 @@ Ext.define('Ext.ux.TabCloseMenu', {
 
     onHideMenu: function () {
         var me = this;
+
+        me.item = null;
         me.fireEvent('aftermenu', me.menu, me);
     },
 
@@ -200,16 +198,14 @@ Ext.define('Ext.ux.TabCloseMenu', {
 
         this.tabPanel.items.each(function(item){
             if(item.closable){
-                if(!excludeActive || item !== this.item){
+                if(!excludeActive || item != this.item){
                     items.push(item);
                 }
             }
         }, this);
 
-        Ext.suspendLayouts();
-        Ext.Array.forEach(items, function(item){
+        Ext.each(items, function(item){
             this.tabPanel.remove(item);
         }, this);
-        Ext.resumeLayouts(true);
     }
 });

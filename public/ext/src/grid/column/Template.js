@@ -1,8 +1,28 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * A Column definition class which renders a value by processing a {@link Ext.data.Model Model}'s
- * {@link Ext.data.Model#getData data} using a {@link #tpl configured}
+ * {@link Ext.data.Model#persistenceProperty data} using a {@link #tpl configured}
  * {@link Ext.XTemplate XTemplate}.
- *
+ * 
  *     @example
  *     Ext.create('Ext.data.Store', {
  *         storeId:'employeeStore',
@@ -16,7 +36,7 @@
  *             { firstname: "Angela",  lastname: "Martin",  seniority: 5, department: "Accounting" }
  *         ]
  *     });
- *
+ *     
  *     Ext.create('Ext.grid.Panel', {
  *         title: 'Column Template Demo',
  *         store: Ext.data.StoreManager.lookup('employeeStore'),
@@ -38,14 +58,15 @@ Ext.define('Ext.grid.column.Template', {
     /**
      * @cfg {String/Ext.XTemplate} tpl
      * An {@link Ext.XTemplate XTemplate}, or an XTemplate *definition string* to use to process a
-     * {@link Ext.data.Model Model}'s data object to produce a cell's rendered value.
+     * {@link Ext.data.Model Model}'s {@link Ext.data.Model#persistenceProperty data} to produce a
+     * column's rendered value.
      */
-
+    
     /**
      * @cfg {Object} renderer
      * @hide
      */
-
+    
     /**
      * @cfg {Object} scope
      * @hide
@@ -59,13 +80,9 @@ Ext.define('Ext.grid.column.Template', {
         me.hasCustomRenderer = true;
         me.callParent(arguments);
     },
-
+    
     defaultRenderer: function(value, meta, record) {
         var data = Ext.apply({}, record.data, record.getAssociatedData());
         return this.tpl.apply(data);
-    },
-
-    updater: function(cell, value) {
-        cell.firstChild.innerHTML = Ext.grid.column.CheckColumn.prototype.defaultRenderer.call(this, value);
     }
 });

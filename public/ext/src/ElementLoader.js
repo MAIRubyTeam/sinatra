@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * A class used to load remote content to an Element. Sample usage:
  *
@@ -9,7 +29,7 @@
  *         }
  *     });
  *
- * In general this class will not be instanced directly, rather the {@link Ext.dom.Element#method-load} method
+ * In general this class will not be instanced directly, rather the {@link Ext.Element#method-load} method
  * will be used.
  */
 Ext.define('Ext.ElementLoader', {
@@ -28,7 +48,7 @@ Ext.define('Ext.ElementLoader', {
     statics: {
         Renderer: {
             Html: function(loader, response, active){
-                loader.getTarget().setHtml(response.responseText, active.scripts === true);
+                loader.getTarget().update(response.responseText, active.scripts === true);
                 return true;
             }
         }
@@ -57,14 +77,14 @@ Ext.define('Ext.ElementLoader', {
 
     /**
      * @cfg {Boolean/Object} autoLoad
-     * `true` to have the loader make a request as soon as it is created.
-     * This argument can also be a set of options that will be passed to {@link #method-load} when it is called.
+     * True to have the loader make a request as soon as it is created.
+     * This argument can also be a set of options that will be passed to {@link #method-load} is called.
      */
     autoLoad: false,
 
     /**
-     * @cfg {HTMLElement/Ext.dom.Element/String} target
-     * The target element for the loader. It can be the DOM element, the id or an {@link Ext.dom.Element}.
+     * @cfg {HTMLElement/Ext.Element/String} target
+     * The target element for the loader. It can be the DOM element, the id or an {@link Ext.Element}.
      */
     target: null,
 
@@ -129,11 +149,6 @@ Ext.define('Ext.ElementLoader', {
      * - The response
      * - The active request
      */
-    
-    /**
-     * @cfg {Object} rendererScope
-     * The scope to execute the {@link #renderer} function in.
-     */
 
     /**
      * @property {Boolean} isLoader
@@ -141,57 +156,59 @@ Ext.define('Ext.ElementLoader', {
      */
     isLoader: true,
 
-    /**
-     * @event beforeload
-     * Fires before a load request is made to the server.
-     * Returning false from an event listener can prevent the load
-     * from occurring.
-     * @param {Ext.ElementLoader} this
-     * @param {Object} options The options passed to the request
-     */
-
-    /**
-     * @event exception
-     * Fires after an unsuccessful load.
-     * @param {Ext.ElementLoader} this
-     * @param {Object} response The response from the server
-     * @param {Object} options The options passed to the request
-     */
-
-    /**
-     * @event load
-     * Fires after a successful load.
-     * @param {Ext.ElementLoader} this
-     * @param {Object} response The response from the server
-     * @param {Object} options The options passed to the request
-     */
-
     constructor: function(config) {
         var me = this,
             autoLoad;
 
         config = config || {};
         Ext.apply(me, config);
-        
+        me.setTarget(me.target);
+        me.addEvents(
+            /**
+             * @event beforeload
+             * Fires before a load request is made to the server.
+             * Returning false from an event listener can prevent the load
+             * from occurring.
+             * @param {Ext.ElementLoader} this
+             * @param {Object} options The options passed to the request
+             */
+            'beforeload',
+
+            /**
+             * @event exception
+             * Fires after an unsuccessful load.
+             * @param {Ext.ElementLoader} this
+             * @param {Object} response The response from the server
+             * @param {Object} options The options passed to the request
+             */
+            'exception',
+
+            /**
+             * @event load
+             * Fires after a successful load.
+             * @param {Ext.ElementLoader} this
+             * @param {Object} response The response from the server
+             * @param {Object} options The options passed to the request
+             */
+            'load'
+        );
+
         // don't pass config because we have already applied it.
         me.mixins.observable.constructor.call(me);
-
-        me.setTarget(me.target);
-
 
         if (me.autoLoad) {
             autoLoad = me.autoLoad;
             if (autoLoad === true) {
-                autoLoad = null;
+                autoLoad = {};
             }
             me.load(autoLoad);
         }
     },
 
     /**
-     * Sets an {@link Ext.dom.Element} as the target of this loader.
+     * Sets an {@link Ext.Element} as the target of this loader.
      * Note that if the target is changed, any active requests will be aborted.
-     * @param {String/HTMLElement/Ext.dom.Element} target The element or its ID.
+     * @param {String/HTMLElement/Ext.Element} target The element or its ID.
      */
     setTarget: function(target){
         var me = this;
@@ -261,8 +278,7 @@ Ext.define('Ext.ElementLoader', {
             params = Ext.apply({}, options.params),
             ajaxOptions = Ext.apply({}, options.ajaxOptions),
             callback = options.callback || me.callback,
-            scope = options.scope || me.scope || me,
-            rendererScope = options.rendererScope || me.rendererScope || me;
+            scope = options.scope || me.scope || me;
 
         Ext.applyIf(ajaxOptions, me.ajaxOptions);
         Ext.applyIf(options, ajaxOptions);
@@ -298,7 +314,6 @@ Ext.define('Ext.ElementLoader', {
             options: options,
             mask: mask,
             scope: scope,
-            rendererScope: rendererScope,
             callback: callback,
             success: options.success || me.success,
             failure: options.failure || me.failure,
@@ -327,14 +342,12 @@ Ext.define('Ext.ElementLoader', {
     onComplete: function(options, success, response) {
         var me = this,
             active = me.active,
-            rendererScope,
             scope;
 
         if (active) {
             scope = active.scope;
-            rendererScope = active.rendererScope;
             if (success) {
-                success = me.getRenderer(active.renderer).call(rendererScope, me, response, active) !== false;
+                success = me.getRenderer(active.renderer).call(me, me, response, active) !== false;
             }
 
             if (success) {
@@ -374,7 +387,7 @@ Ext.define('Ext.ElementLoader', {
     startAutoRefresh: function(interval, options){
         var me = this;
         me.stopAutoRefresh();
-        me.autoRefresh = Ext.interval(function(){
+        me.autoRefresh = setInterval(function(){
             me.load(options);
         }, interval);
     },

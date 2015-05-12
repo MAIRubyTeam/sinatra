@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * Danish translation
  * By JohnF
@@ -125,7 +145,8 @@ Ext.define("Ext.locale.da.form.field.Number", {
     override: "Ext.form.field.Number",
     minText: "Mindste-værdien for dette felt er {0}",
     maxText: "Maksimum-værdien for dette felt er {0}",
-    nanText: "{0} er ikke et tilladt nummer"
+    nanText: "{0} er ikke et tilladt nummer",
+    decimalSeparator: ","
 });
 
 Ext.define("Ext.locale.da.form.field.Date", {
@@ -248,7 +269,7 @@ Ext.define("Ext.locale.da.grid.header.Container", {
 });
 
 Ext.define("Ext.locale.da.grid.GroupingFeature", {
-    override: "Ext.grid.feature.Grouping",
+    override: "Ext.grid.GroupingFeature",
     emptyGroupText: '(Ingen)',
     groupByText: 'Gruppér efter dette felt',
     showGroupsText: 'Vis i grupper' //should this be sort in groups?

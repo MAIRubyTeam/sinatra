@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * This layout allows you to easily render content into an HTML table. The total number of columns can be specified, and
  * rowspan and colspan can be used to create complex layouts within the table. This class is intended to be extended or
@@ -68,6 +88,9 @@ Ext.define('Ext.layout.container.Table', {
      * this layout will be rendered into a single row using one column per Component.
      */
 
+    // private
+    monitorResize:false,
+
     type: 'table',
     
     createsInnerCt: true,
@@ -78,7 +101,7 @@ Ext.define('Ext.layout.container.Table', {
 
     /**
      * @cfg {Object} tableAttrs
-     * An object containing properties which are added to the {@link Ext.dom.Helper DomHelper} specification used to
+     * An object containing properties which are added to the {@link Ext.DomHelper DomHelper} specification used to
      * create the layout's `<table>` element. Example:
      *
      *     {
@@ -98,13 +121,13 @@ Ext.define('Ext.layout.container.Table', {
 
     /**
      * @cfg {Object} trAttrs
-     * An object containing properties which are added to the {@link Ext.dom.Helper DomHelper} specification used to
+     * An object containing properties which are added to the {@link Ext.DomHelper DomHelper} specification used to
      * create the layout's `<tr>` elements.
      */
 
     /**
      * @cfg {Object} tdAttrs
-     * An object containing properties which are added to the {@link Ext.dom.Helper DomHelper} specification used to
+     * An object containing properties which are added to the {@link Ext.DomHelper DomHelper} specification used to
      * create the layout's `<td>` elements.
      */
 
@@ -112,8 +135,8 @@ Ext.define('Ext.layout.container.Table', {
         return this.autoSizePolicy;
     },
     
-    initInheritedState: function (inheritedState, inheritedStateInner) {
-        inheritedStateInner.inShrinkWrapTable  = true;
+    initHierarchyState: function (hierarchyStateInner) {    
+        hierarchyStateInner.inShrinkWrapTable  = true;
     },
 
     getLayoutItems: function() {
@@ -186,7 +209,7 @@ Ext.define('Ext.layout.container.Table', {
             // If no cell present, create and insert one
             itemCt = tdEl = Ext.get(trEl.cells[cellIdx] || trEl.insertCell(cellIdx));
             if (me.needsDivWrap()) { //create wrapper div if needed - see docs below
-                itemCt = tdEl.first() || tdEl.createChild({ tag: 'div', role: 'presentation' });
+                itemCt = tdEl.first() || tdEl.createChild({tag: 'div'});
                 itemCt.setWidth(null);
             }
 
@@ -280,6 +303,10 @@ Ext.define('Ext.layout.container.Table', {
                 Ext.fly(item.el.dom.parentNode).setWidth(item.getWidth());
             }
         }
+        if (Ext.isIE6 || Ext.isIEQuirks) {
+            // Fixes an issue where the table won't paint
+            this.owner.getTargetEl().child('table').repaint();
+        }
     },
 
     /**
@@ -352,7 +379,6 @@ Ext.define('Ext.layout.container.Table', {
                 cellpadding: 0,
                 cn: {
                     tag: 'tbody',
-                    role: 'presentation',
                     cn: rows
                 }
             }, me.tableAttrs),
@@ -375,7 +401,6 @@ Ext.define('Ext.layout.container.Table', {
             if (!tr) {
                 tr = rows[rowIdx] = {
                     tag: 'tr',
-                    role: 'presentation',
                     cn: []
                 };
                 if (me.trAttrs) {
@@ -385,8 +410,7 @@ Ext.define('Ext.layout.container.Table', {
 
             // If no cell present, create and insert one
             cell = tr.cn[cellIdx] = {
-                tag: 'td',
-                role: 'presentation'
+                tag: 'td'
             };
             if (tdAttrs) {
                 Ext.apply(cell, tdAttrs);
@@ -400,8 +424,7 @@ Ext.define('Ext.layout.container.Table', {
 
             if (needsDivWrap) { //create wrapper div if needed - see docs below
                 cell = cell.cn = {
-                    tag: 'div',
-                    role: 'presentation'
+                    tag: 'div'
                 };
             }
 

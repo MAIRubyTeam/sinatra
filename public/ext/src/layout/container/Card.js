@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * This layout manages multiple child Components, each fitted to the Container, where only a single child Component can be
  * visible at any given time.  This layout style is most commonly used for wizards, tab implementations, etc.
@@ -182,7 +202,7 @@ Ext.define('Ext.layout.container.Card', {
     renderChildren: function () {
         var me = this,
             active = me.getActiveItem();
-
+            
         if (!me.deferredRender) {
             me.callParent();
         } else if (active) {
@@ -204,55 +224,46 @@ Ext.define('Ext.layout.container.Card', {
      */
     getActiveItem: function() {
         var me = this,
-            // It's necessary to check that me.activeItem is not undefined as it could be 0 (falsey). We're more interested in
-            // checking the layout's activeItem property, since that is the source of truth for an activeItem.  If it's
-            // determined to be empty, check the owner. Note that a default item is returned if activeItem is `undefined` but
-            // not `null`. Also, note that `null` is legitimate value and completely different from `undefined`.
-            item = me.activeItem === undefined ? (me.owner && me.owner.activeItem) : me.activeItem,
-            result = me.parseActiveItem(item);
+            // Ensure the calculated result references a Component
+            result = me.parseActiveItem(me.activeItem || (me.owner && me.owner.activeItem));
 
         // Sanitize the result in case the active item is no longer there.
-        if (result && me.owner.items.indexOf(result) !== -1) {
+        if (result && me.owner.items.indexOf(result) != -1) {
             me.activeItem = result;
+        } else {
+            me.activeItem = null;
         }
 
-        // Note that in every use case me.activeItem will have a truthy value except for when a container or tabpanel is explicity
-        // configured with activeItem/Tab === null or when an out-of-range index is given for an active tab (as it will be undefined).
-        // In those cases, it is meaningful to return the null value, so do so.
-        return result == null ? null : (me.activeItem || me.owner.activeItem);
+        return me.activeItem;
     },
 
     // @private
-    parseActiveItem: function (item) {
-        var activeItem;
-
+    parseActiveItem: function(item) {
         if (item && item.isComponent) {
-            activeItem = item;
-        } else if (typeof item === 'number' || item === undefined) {
-            activeItem = this.getLayoutItems()[item || 0];
-        } else if (item === null) {
-            activeItem = null;
+            return item;
+        } else if (typeof item == 'number' || item === undefined) {
+            return this.getLayoutItems()[item || 0];
         } else {
-            activeItem = this.owner.getComponent(item);
+            return this.owner.getComponent(item);
         }
-
-        return activeItem;
     },
 
     // @private. Called before both dynamic render, and bulk render.
     // Ensure that the active item starts visible, and inactive ones start invisible
     configureItem: function(item) {
-        item.setHiddenState(item !== this.getActiveItem());
+        if (item === this.getActiveItem()) {
+            item.hidden = false;
+        } else {
+            item.hidden = true;
+        }
         this.callParent(arguments);
     },
 
     onRemove: function(component) {
-        this.callParent([component]);
-
-        if (component === this.activeItem) {
-            // Note setting to `undefined` is intentional. Don't null it out since null now has a specific meaning in
-            // tab management (it specifies not setting an active item).
-            this.activeItem = undefined;
+        var me = this;
+        
+        if (component === me.activeItem) {
+            me.activeItem = null;
         }
     },
 
@@ -334,15 +345,14 @@ Ext.define('Ext.layout.container.Card', {
             owner = me.owner,
             oldCard = me.activeItem,
             rendered = owner.rendered,
-            newIndex,
-            focusNewCard;
+            newIndex;
 
         newCard = me.parseActiveItem(newCard);
         newIndex = owner.items.indexOf(newCard);
 
         // If the card is not a child of the owner, then add it.
         // Without doing a layout!
-        if (newIndex === -1) {
+        if (newIndex == -1) {
             newIndex = owner.items.items.length;
             Ext.suspendLayouts();
             newCard = owner.add(newCard);
@@ -350,7 +360,7 @@ Ext.define('Ext.layout.container.Card', {
         }
 
         // Is this a valid, different card?
-        if (newCard && oldCard !== newCard) {
+        if (newCard && oldCard != newCard) {
             // Fire the beforeactivate and beforedeactivate events on the cards
             if (newCard.fireEvent('beforeactivate', newCard, oldCard) === false) {
                 return false;
@@ -369,40 +379,19 @@ Ext.define('Ext.layout.container.Card', {
 
                 if (oldCard) {
                     if (me.hideInactive) {
-                        focusNewCard = oldCard.el.contains(Ext.Element.getActiveElement());
                         oldCard.hide();
-                        if (oldCard.hidden) {
-                            oldCard.hiddenByLayout = true;
-                            oldCard.fireEvent('deactivate', oldCard, newCard);
-                        }
-                        // Hide was vetoed, we cannot change cards.
-                        else {
-                            return false;
-                        }
+                        oldCard.hiddenByLayout = true;
                     }
+                    oldCard.fireEvent('deactivate', oldCard, newCard);
                 }
                 // Make sure the new card is shown
                 if (newCard.hidden) {
                     newCard.show();
                 }
 
-                // Layout needs activeItem to be correct, so clear it if the show has been vetoed,
-                // set it if the show has *not* been vetoed.
-                if (newCard.hidden) {
-                    me.activeItem = newCard = null;
-                } else {
+                // Layout needs activeItem to be correct, so set it if the show has not been vetoed
+                if (!newCard.hidden) {
                     me.activeItem = newCard;
-
-                    // If the card being hidden contained focus, attempt to focus the new card
-                    // So as not to leave focus undefined.
-                    // The focus() call will focus the defaultFocus if it is a container
-                    // so ensure there is a defaultFocus.
-                    if (focusNewCard) {
-                        if (!newCard.defaultFocus) {
-                            newCard.defaultFocus = ':focusable';
-                        }
-                        newCard.focus();
-                    }
                 }
                 Ext.resumeLayouts(true);
             } else {

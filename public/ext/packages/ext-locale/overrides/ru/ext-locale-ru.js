@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * Russian translation
  * By ZooKeeper (utf-8 encoding)
@@ -251,7 +271,7 @@ Ext.define("Ext.locale.ru.grid.header.Container", {
 });
 
 Ext.define("Ext.locale.ru.grid.GroupingFeature", {
-    override: "Ext.grid.feature.Grouping",
+    override: "Ext.grid.GroupingFeature",
     emptyGroupText: '(Пусто)',
     groupByText: 'Группировать по этому полю',
     showGroupsText: 'Отображать по группам'
@@ -272,11 +292,6 @@ Ext.define("Ext.locale.ru.window.MessageBox", {
         yes: "Да",
         no: "Нет"
     }    
-});
-
-Ext.define("Ext.locale.ru.form.field.File", {
-    override: "Ext.form.field.File",
-    buttonText: "Обзор..."
 });
 
 // This is needed until we can refactor all of the locales into individual files

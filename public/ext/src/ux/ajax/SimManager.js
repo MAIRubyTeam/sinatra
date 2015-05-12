@@ -20,7 +20,7 @@
  *              delay: 300
  *          }).register({
  *              '/app/data/url': {
- *                  type: 'json',  // use JsonSimlet (type is like xtype for components)
+ *                  stype: 'json',  // use JsonSimlet (stype is like xtype for components)
  *                  data: [
  *                      { foo: 42, bar: 'abc' },
  *                      ...
@@ -63,7 +63,7 @@ Ext.define('Ext.ux.ajax.SimManager', {
 
     /**
      * @cfg {String} defaultType
-     * The default `type` to apply to generic {@link Ext.ux.ajax.Simlet} configuration objects. The
+     * The default `stype` to apply to generic {@link Ext.ux.ajax.Simlet} configuration objects. The
      * default is 'basic'.
      */
     defaultType: 'basic',
@@ -82,16 +82,13 @@ Ext.define('Ext.ux.ajax.SimManager', {
     ready: false,
 
     constructor: function () {
-        this.simlets = [];
+        this.simlets = {};
     },
 
     getSimlet: function (url) {
         // Strip down to base URL (no query parameters or hash):
         var me = this,
-            index = url.indexOf('?'),
-            simlets = me.simlets,
-            len = simlets.length,
-            i, simlet, simUrl, match;
+            index = url.indexOf('?');
 
         if (index < 0) {
             index = url.indexOf('#');
@@ -99,21 +96,8 @@ Ext.define('Ext.ux.ajax.SimManager', {
         if (index > 0) {
             url = url.substring(0, index);
         }
-        
-        for (i = 0; i < len; ++i) {
-            simlet = simlets[i];
-            simUrl = simlet.url;
-            if (simUrl instanceof RegExp) {
-                match = simUrl.test(url);
-            } else {
-                match = simUrl === url;
-            }
-            if (match) {
-                return simlet;
-            }
-        }
 
-        return me.defaultSimlet;
+        return me.simlets[url] || me.defaultSimlet;
     },
 
     getXhr: function (method, url, options, async) {
@@ -179,9 +163,6 @@ Ext.define('Ext.ux.ajax.SimManager', {
                         if (script.simlet) {
                             script.jsonpCallback = request.params[request.callbackKey];
                             script.send(null);
-
-                            // Ext.data.JsonP will attempt dom removal of a script tag, so emulate its presence
-                            request.script = document.createElement('script');
                         } else {
                             this.callParent(arguments);
                         }
@@ -216,9 +197,9 @@ Ext.define('Ext.ux.ajax.SimManager', {
         function reg (one) {
             var simlet = one;
             if (!simlet.isSimlet) {
-                simlet = Ext.create('simlet.' + (simlet.type || simlet.stype || me.defaultType), one);
+                simlet = Ext.create('simlet.' + (simlet.stype || me.defaultType), one);
             }
-            me.simlets.push(simlet);
+            me.simlets[one.url] = simlet;
             simlet.manager = me;
         }
 

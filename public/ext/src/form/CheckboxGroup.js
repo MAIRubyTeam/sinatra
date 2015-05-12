@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * A {@link Ext.form.FieldContainer field container} which has a specialized layout for arranging
  * {@link Ext.form.field.Checkbox} controls into columns, and provides convenience
@@ -119,8 +139,6 @@ Ext.define('Ext.form.CheckboxGroup', {
     layout: 'checkboxgroup',
 
     componentCls: Ext.baseCSSPrefix + 'form-checkboxgroup',
-    
-    ariaRole: 'group',
 
     initComponent: function() {
         var me = this;
@@ -145,18 +163,18 @@ Ext.define('Ext.form.CheckboxGroup', {
 
     /**
      * When a checkbox is added to the group, monitor it for changes
-     * @param {Object} field The field being added
+     * @param {Object} field
      * @protected
      */
-    onAdd: function(field) {
+    onAdd: function(item) {
         var me = this,
             items,
             len, i;
 
-        if (field.isCheckbox) {
-            me.mon(field, 'change', me.checkChange, me);
-        } else if (field.isContainer) {
-            items = field.items.items;
+        if (item.isCheckbox) {
+            me.mon(item, 'change', me.checkChange, me);
+        } else if (item.isContainer) {
+            items = item.items.items;
             for (i = 0, len = items.length; i < len; i++) {
                 me.onAdd(items[i]);
             }
@@ -188,7 +206,7 @@ Ext.define('Ext.form.CheckboxGroup', {
 
     /**
      * Runs CheckboxGroup's validations and returns an array of any errors. The only error by default is if allowBlank
-     * is set to false and no items are checked.
+     * is set to true and no items are checked.
      * @return {String[]} Array of all validation errors
      */
     getErrors: function() {
@@ -352,13 +370,12 @@ Ext.define('Ext.form.CheckboxGroup', {
             cbValue;
 
         me.batchChanges(function() {
-            Ext.suspendLayouts();
             for (b = 0; b < bLen; b++) {
                 box = boxes[b];
                 name = box.getName();
                 cbValue = false;
 
-                if (value) {
+                if (value && value.hasOwnProperty(name)) {
                     if (Ext.isArray(value[name])) {
                         cbValue = Ext.Array.contains(value[name], box.inputValue);
                     } else {
@@ -369,7 +386,6 @@ Ext.define('Ext.form.CheckboxGroup', {
 
                 box.setValue(cbValue);
             }
-            Ext.resumeLayouts(true);
         });
         return me;
     },

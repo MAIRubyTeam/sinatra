@@ -1,5 +1,8 @@
 .#{$prefix}slider {
     outline: none; // prevent dotted outline in firefox when focused
+    @if $include-ie {
+        zoom:1;
+    }
     position: relative;
 }
 
@@ -8,8 +11,17 @@
     left:0;
     top:0;
     overflow:visible;
+    @if $include-ie {
+        zoom:1;
+    }
     .#{$prefix}slider-vert & {
         background: repeat-y 0 0;
+    }
+}
+
+@if $include-ie {
+    .#{$prefix}slider-end {
+        zoom: 1;
     }
 }
 

@@ -65,20 +65,7 @@ Ext.define('Ext.ux.ajax.Simlet', function () {
             var me = this,
                 ret = {};
 
-            Ext.Array.forEach(me.responseProps, function (prop) {
-                if (prop in me) {
-                    ret[prop] = me[prop];
-                }
-            });
-
-            return ret;
-        },
-        
-        doPost: function (ctx) {
-            var me = this,
-                ret = {};
-
-            Ext.Array.forEach(me.responseProps, function (prop) {
+            Ext.each(me.responseProps, function (prop) {
                 if (prop in me) {
                     ret[prop] = me[prop];
                 }

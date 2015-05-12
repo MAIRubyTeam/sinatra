@@ -1,3 +1,23 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
  * @docauthor Jason Johnston <jason@sencha.com>
  *
@@ -116,9 +136,9 @@ Ext.define('Ext.form.field.Number', {
     //<locale>
     /**
      * @cfg {String} decimalSeparator
-     * Character(s) to allow as the decimal separator. Defaults to {@link Ext.util.Format#decimalSeparator decimalSeparator}.
+     * Character(s) to allow as the decimal separator
      */
-    decimalSeparator : null,
+    decimalSeparator : '.',
     //</locale>
     
     //<locale>
@@ -212,9 +232,6 @@ Ext.define('Ext.form.field.Number', {
 
     initComponent: function() {
         var me = this;
-        if (me.decimalSeparator === null) {
-            me.decimalSeparator = Ext.util.Format.decimalSeparator;
-        }
         me.callParent();
 
         me.setMinValue(me.minValue);
@@ -229,12 +246,12 @@ Ext.define('Ext.form.field.Number', {
      * @return {String[]} All validation errors for this field
      */
     getErrors: function(value) {
-        value = arguments.length > 0 ? value : this.processRawValue(this.getRawValue());
-
         var me = this,
-            errors = me.callParent([value]),
+            errors = me.callParent(arguments),
             format = Ext.String.format,
             num;
+
+        value = Ext.isDefined(value) ? value : this.processRawValue(this.getRawValue());
 
         if (value.length < 1) { // if it's blank and textfield didn't flag it then it's valid
              return errors;
@@ -383,14 +400,13 @@ Ext.define('Ext.form.field.Number', {
         return parseFloat(Ext.Number.toFixed(parseFloat(value), precision));
     },
 
-    onBlur : function(e) {
+    beforeBlur : function() {
         var me = this,
-            v = me.rawToValue(me.getRawValue());
+            v = me.parseValue(me.getRawValue());
 
         if (!Ext.isEmpty(v)) {
             me.setValue(v);
         }
-        me.callParent([e]);
     },
     
     setSpinUpEnabled: function(enabled, /* private */ internal){
@@ -428,7 +444,8 @@ Ext.define('Ext.form.field.Number', {
     },
     
     setSpinValue: function(value) {
-        var me = this;
+        var me = this,
+            len;
             
         if (me.enforceMaxLength) {
             // We need to round the value here, otherwise we could end up with a

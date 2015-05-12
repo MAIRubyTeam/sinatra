@@ -27,14 +27,13 @@ $datepicker-monthpicker-small-yearnav-height: $datepicker-monthpicker-small-item
 }
 
 @if not $datepicker-use-transparent-month-button {
-    $datepicker-button-height: $datepicker-button-height + vertical($button-small-border-width);
+    $datepicker-button-height: $datepicker-button-height + vertical($button-small-border-width); 
 }
 .#{$prefix}datepicker-arrow {
     width: $datepicker-arrow-width;
     height: $datepicker-arrow-height;
     top: round(($datepicker-button-height + vertical($datepicker-header-padding) - $datepicker-arrow-height) / 2);
     cursor: $datepicker-arrow-cursor;
-    -webkit-touch-callout: none;
 
     // EXTJSIV-8846: partially transparent png images do not display correctly
     // in winXP/IE8m when the image element has a transparent background.
@@ -48,19 +47,19 @@ $datepicker-monthpicker-small-yearnav-height: $datepicker-monthpicker-small-item
 
 @if $datepicker-arrow-opacity-over != 1 or $datepicker-arrow-opacity != 1  {
     // include the element name since :hover causes performance issues in IE7 and 8 otherwise
-    div.#{$prefix}datepicker-arrow:hover {
+    a.#{$prefix}datepicker-arrow:hover {
         @include opacity($datepicker-arrow-opacity-over);
     }
 }
 
 .#{$prefix}datepicker-next {
     right: right($datepicker-header-padding);
-    background: theme-background-image($datepicker-next-image) no-repeat $datepicker-next-background-position;
+    background-image: theme-background-image($datepicker-next-image);
 }
 
 .#{$prefix}datepicker-prev {
     left: left($datepicker-header-padding);
-    background: theme-background-image($datepicker-prev-image) no-repeat $datepicker-prev-background-position;
+    background-image: theme-background-image($datepicker-prev-image);
 }
 
 .#{$prefix}datepicker-month {
@@ -86,13 +85,9 @@ $datepicker-monthpicker-small-yearnav-height: $datepicker-monthpicker-small-item
         }
     }
 
-    .#{$prefix}btn-split-right:after, .#{$prefix}btn-over .#{$prefix}btn-split-right:after {
+    .#{$prefix}btn-split-right {
         background-image: theme-background-image($datepicker-month-button-arrow-image);
         padding-right: $datepicker-month-button-arrow-width;
-    }
-
-    .#{$prefix}btn-over {
-        border-color: transparent;
     }
 }
 
@@ -140,7 +135,7 @@ $datepicker-monthpicker-small-yearnav-height: $datepicker-monthpicker-small-item
 }
 
 // include the element name since :hover causes performance issues in IE7 and 8 otherwise
-div.#{$prefix}datepicker-date:hover {
+a.#{$prefix}datepicker-date:hover {
     color: $datepicker-item-color; // needed to override color for prevday/nextday
     background-color: $datepicker-item-hover-background-color;
 }
@@ -168,7 +163,7 @@ div.#{$prefix}datepicker-date:hover {
 
 .#{$prefix}datepicker-disabled {
     // include the element name to increase the specificity over the :hover rule
-    .#{$prefix}datepicker-date {
+    a.#{$prefix}datepicker-date {
         background-color: $datepicker-item-disabled-background-color;
         cursor: $datepicker-item-disabled-cursor;
         color: $datepicker-item-disabled-color;
@@ -176,9 +171,8 @@ div.#{$prefix}datepicker-date:hover {
 }
 
 // include the element name since :hover causes performance issues in IE7 and 8 otherwise
-.#{$prefix}datepicker-disabled  div.#{$prefix}datepicker-date:hover {
+.#{$prefix}datepicker-disabled  a.#{$prefix}datepicker-date:hover {
     background-color: $datepicker-item-disabled-background-color;
-    color: $datepicker-item-disabled-color;
 }
 
 .#{$prefix}datepicker-footer,
@@ -186,7 +180,7 @@ div.#{$prefix}datepicker-date:hover {
     padding: $datepicker-footer-padding;
 
     @if $datepicker-footer-border-width != 0 {
-        border-width: $datepicker-footer-border-width;
+        border-width: $datepicker-footer-border-width; 
         border-style: $datepicker-footer-border-style;
         border-color: $datepicker-footer-border-color;
     }
@@ -283,7 +277,6 @@ a.#{$prefix}monthpicker-item-inner:hover {
     @if $datepicker-monthpicker-yearnav-button-opacity != 1 {
         @include opacity($datepicker-monthpicker-yearnav-button-opacity);
     }
-    -webkit-touch-callout: none;
 
     // EXTJSIV-8846: partially transparent png images do not display correctly
     // in winXP/IE8m when the image element has a transparent background.
@@ -299,7 +292,8 @@ a.#{$prefix}monthpicker-item-inner:hover {
 }
 
 .#{$prefix}monthpicker-yearnav-next {
-    background: theme-background-image($datepicker-monthpicker-next-image) no-repeat $datepicker-monthpicker-next-background-position;
+    background-image: theme-background-image($datepicker-monthpicker-next-image);
+    background-position: $datepicker-monthpicker-next-background-position;
 }
 
 .#{$prefix}monthpicker-yearnav-next-over {
@@ -307,7 +301,8 @@ a.#{$prefix}monthpicker-item-inner:hover {
 }
 
 .#{$prefix}monthpicker-yearnav-prev {
-    background: theme-background-image($datepicker-monthpicker-prev-image) no-repeat $datepicker-monthpicker-prev-background-position;
+    background-image: theme-background-image($datepicker-monthpicker-prev-image);
+    background-position: $datepicker-monthpicker-prev-background-position;
 }
 
 .#{$prefix}monthpicker-yearnav-prev-over {
@@ -333,9 +328,9 @@ a.#{$prefix}monthpicker-item-inner:hover {
 }
 
 //nlg support
-@if $include-slicer-gradient {
+@if not $supports-gradients or $compile-all {
     .#{$prefix}nlg {
-        @if not is-null($datepicker-header-background-gradient) {
+        @if $datepicker-header-background-gradient != null {
             .#{$prefix}datepicker-header {
                 background-image: slicer-background-image(datepicker-header, 'datepicker/datepicker-header-bg');
                 background-repeat: repeat-x;
@@ -343,7 +338,7 @@ a.#{$prefix}monthpicker-item-inner:hover {
             }
         }
 
-        @if not is-null($datepicker-footer-background-gradient) {
+        @if $datepicker-footer-background-gradient != null {
             .#{$prefix}datepicker-footer,
             .#{$prefix}monthpicker-buttons {
                 background-image: slicer-background-image(datepicker-footer, 'datepicker/datepicker-footer-bg');
@@ -354,7 +349,5 @@ a.#{$prefix}monthpicker-item-inner:hover {
     }
 }
 
-$stretch: slicer-background-stretch(datepicker-header, bottom);
-$stretch: slicer-background-stretch(datepicker-footer, bottom);
 @include x-slicer(datepicker-header);
 @include x-slicer(datepicker-footer);

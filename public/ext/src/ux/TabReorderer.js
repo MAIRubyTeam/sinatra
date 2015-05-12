@@ -4,9 +4,8 @@
 Ext.define('Ext.ux.TabReorderer', {
 
     extend: 'Ext.ux.BoxReorderer',
-    alias: 'plugin.tabreorderer',
 
-    itemSelector: '.' + Ext.baseCSSPrefix + 'tab',
+    itemSelector: '.x-tab',
 
     init: function(tabPanel) {
         var me = this;
@@ -17,7 +16,7 @@ Ext.define('Ext.ux.TabReorderer', {
         tabPanel.onAdd = Ext.Function.createSequence(tabPanel.onAdd, me.onAdd);
     },
 
-    onBoxReady: function() {
+    afterFirstLayout: function() {
         var tabs,
             len,
             i = 0,

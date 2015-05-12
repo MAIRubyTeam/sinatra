@@ -1,6 +1,26 @@
+/*
+This file is part of Ext JS 4.2
+
+Copyright (c) 2011-2013 Sencha Inc
+
+Contact:  http://www.sencha.com/contact
+
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
+
+Build date: 2013-05-16 14:36:50 (f9be68accb407158ba2b1be2c226a6ce1f649314)
+*/
 /**
- * A specialized floating Component that supports a drop status icon and auto-repair.
- * This is the default drag proxy used by all Ext.dd components.
+ * A specialized floating Component that supports a drop status icon, {@link Ext.Layer} styles
+ * and auto-repair.  This is the default drag proxy used by all Ext.dd components.
  */
 Ext.define('Ext.dd.StatusProxy', {
     extend: 'Ext.Component',
@@ -11,13 +31,11 @@ Ext.define('Ext.dd.StatusProxy', {
     ],
 
     renderTpl: [
-        '<div class="' + Ext.baseCSSPrefix + 'dd-drop-icon" role="presentation"></div>' +
-        '<div id="{id}-ghost" data-ref="ghost" class="' + Ext.baseCSSPrefix + 'dd-drag-ghost" role="presentation"></div>'
+        '<div class="' + Ext.baseCSSPrefix + 'dd-drop-icon"></div>' +
+        '<div id="{id}-ghost" class="' + Ext.baseCSSPrefix + 'dd-drag-ghost"></div>'
     ],
     
     repairCls: Ext.baseCSSPrefix + 'dd-drag-repair',
-    
-    ariaRole: 'presentation',
 
     /**
      * Creates new StatusProxy.
@@ -77,7 +95,7 @@ Ext.define('Ext.dd.StatusProxy', {
         me.el.replaceCls(clsPrefix + me.dropAllowed, clsPrefix + me.dropNotAllowed);
         me.dropStatus = me.dropNotAllowed;
         if (clearGhost) {
-            me.ghost.setHtml('');
+            me.ghost.update('');
         }
     },
 
@@ -88,9 +106,9 @@ Ext.define('Ext.dd.StatusProxy', {
      */
     update : function(html){
         if (typeof html == "string") {
-            this.ghost.setHtml(html);
+            this.ghost.update(html);
         } else {
-            this.ghost.setHtml('');
+            this.ghost.update("");
             html.style.margin = "0";
             this.ghost.dom.appendChild(html);
         }
@@ -102,7 +120,7 @@ Ext.define('Ext.dd.StatusProxy', {
 
     /**
      * Returns the ghost element
-     * @return {Ext.dom.Element} el
+     * @return {Ext.Element} el
      */
     getGhost : function(){
         return this.ghost;
@@ -130,10 +148,10 @@ Ext.define('Ext.dd.StatusProxy', {
     },
 
     /**
-     * Force the Element to sync its shadow and shim positions
+     * Force the Layer to sync its shadow and shim positions to the element
      */
     sync : function(){
-        this.el.syncUnderlays();
+        this.el.sync();
     },
 
     /**
@@ -151,7 +169,7 @@ Ext.define('Ext.dd.StatusProxy', {
         me.scope = scope;
         if (xy && me.animRepair !== false) {
             me.el.addCls(me.repairCls);
-            me.el.setUnderlaysVisible(false);
+            me.el.hideUnders(true);
             me.anim = me.el.animate({
                 duration: me.repairDuration || 500,
                 easing: 'ease-out',

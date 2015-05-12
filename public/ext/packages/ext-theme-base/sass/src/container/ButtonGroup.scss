@@ -5,6 +5,7 @@
 
 .#{$prefix}btn-group-body {
     position: relative;
+    zoom: 1;
     .#{$prefix}table-layout-cell {
         vertical-align: top;
     }

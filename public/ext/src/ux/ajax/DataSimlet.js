@@ -6,7 +6,7 @@ Ext.define('Ext.ux.ajax.DataSimlet', function () {
 
     function makeSortFn (def, cmp) {
         var order = def.direction,
-            sign = (order && order.toUpperCase() === 'DESC') ? -1 : 1;
+            sign = (order && order.toUpperCase() == 'DESC') ? -1 : 1;
 
         return function (leftRec, rightRec) {
             var lhs = leftRec[def.property],
@@ -18,7 +18,7 @@ Ext.define('Ext.ux.ajax.DataSimlet', function () {
             }
 
             return cmp(leftRec, rightRec);
-        };
+        }
     }
 
     function makeSortFns (defs, cmp) {
@@ -31,86 +31,22 @@ Ext.define('Ext.ux.ajax.DataSimlet', function () {
     return {
         extend: 'Ext.ux.ajax.Simlet',
 
-        buildNodes: function (node, path) {
-            var me = this,
-                nodeData = {
-                    data: []
-                },
-                len = node.length,
-                children, i, child, name;
-
-            me.nodes[path] = nodeData;
-
-            for (i = 0; i < len; ++i) {
-                nodeData.data.push(child = node[i]);
-                name = child.text || child.title;
-
-                child.id = path ? path + '/' + name : name;
-                children = child.children;
-
-                if (!(child.leaf = !children)) {
-                    delete child.children;
-
-                    me.buildNodes(children, child.id);
-                }
-            }
-        },
-
-        fixTree: function (ctx, tree) {
-            var me = this,
-                node = ctx.params.node,
-                nodes;
-
-            if (!(nodes = me.nodes)) {
-                me.nodes = nodes = {};
-                me.buildNodes(tree, '');
-            }
-
-            node = nodes[node];
-            if (node) {
-                if (me.node) {
-                    me.node.sortedData = me.sortedData;
-                    me.node.currentOrder = me.currentOrder;
-                }
-
-                me.node = node;
-                me.data = node.data;
-                me.sortedData = node.sortedData;
-                me.currentOrder = node.currentOrder;
-            } else {
-                me.data = null;
-            }
-        },
-
         getData: function (ctx) {
             var me = this,
+                data = me.data,
                 params = ctx.params,
-                order = (params.filter || '') + (params.group || '') + '-' + (params.sort || '') + '-' + (params.dir || ''),
-                tree = me.tree,
-                dynamicData,
-                data, fields, sortFn;
+                order = (params.group||'')+'-'+(params.sort||'')+'-'+(params.dir||''),
+                fields,
+                sortFn;
 
-            if (tree) {
-                me.fixTree(ctx, tree);
+            if (!order) {
+                return data;
             }
 
-            data = me.data;
-            if (typeof data === 'function') {
-                dynamicData = true;
-                data = data.call(this, ctx);
-            }
-
-            // If order is '--' then it means we had no order passed, due to the string concat above
-            if (!data || order === '--') {
-                return data || [];
-            }
-
-            if (!dynamicData && order == me.currentOrder) {
+            ctx.groupSpec = params.group && Ext.decode(params.group);
+            if (order == me.currentOrder) {
                 return me.sortedData;
             }
-
-            ctx.filterSpec = params.filter && Ext.decode(params.filter);
-            ctx.groupSpec = params.group && Ext.decode(params.group);
 
             fields = params.sort;
             if (params.dir) {
@@ -119,20 +55,10 @@ Ext.define('Ext.ux.ajax.DataSimlet', function () {
                 fields = Ext.decode(params.sort);
             }
 
-            if (ctx.filterSpec) {
-                var filters = new Ext.util.FilterCollection();
-                filters.add(this.processFilters(ctx.filterSpec));
-                data = Ext.Array.filter(data, filters.getFilterFn());
-            }
-
             sortFn = makeSortFns((ctx.sortSpec = fields));
-            if (ctx.groupSpec) {
-                sortFn = makeSortFns([ctx.groupSpec], sortFn);
-            }
+            sortFn = makeSortFns(ctx.groupSpec, sortFn);
 
-            // If a straight Ajax request, data may not be an array.
-            // If an Array, preserve 'physical' order of raw data...
-            data = Ext.isArray(data) ? data.slice(0) : data;
+            data = data.slice(0); // preserve 'physical' order of raw data...
             if (sortFn) {
                 Ext.Array.sort(data, sortFn);
             }
@@ -142,8 +68,6 @@ Ext.define('Ext.ux.ajax.DataSimlet', function () {
 
             return data;
         },
-        
-        processFilters: Ext.identityFn,
 
         getPage: function (ctx, data) {
             var ret = data,
@@ -164,7 +88,7 @@ Ext.define('Ext.ux.ajax.DataSimlet', function () {
 
         getSummary: function (ctx, data, page) {
             var me = this,
-                groupField = ctx.groupSpec.property,
+                groupField = ctx.groupSpec[0].property,
                 accum,
                 todo = {},
                 summary = [],

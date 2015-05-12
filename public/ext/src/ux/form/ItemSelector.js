@@ -103,7 +103,7 @@ Ext.define('Ext.ux.form.ItemSelector', {
             me.fromField,
             {
                 xtype: 'container',
-                margin: '0 4',
+                margins: '0 4',
                 layout: {
                     type: 'vbox',
                     pack: 'center'
@@ -334,7 +334,7 @@ Ext.define('Ext.ux.form.ItemSelector', {
         var me = this;
 
         if (me.fromField) {
-            me.fromField.store.removeAll();
+            me.fromField.store.removeAll()
             me.toField.store.removeAll();
 
             // Add everything to the from field as soon as the Store is loaded
