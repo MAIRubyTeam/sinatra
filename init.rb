@@ -9,22 +9,23 @@ get '/' do
   "Everybody can see this page"
 end
 
+post '/:entity' do
+  "{id: 1, name: '#{params[:name]}'}"
+end
 delete '/:entity/:id' do
-  
+  "{id: 2, name: '#{params[:name]}'}"
 end
 
 put '/:entity/:id' do
-
-end
-
-get '/:entity' do
-  "Hello #{params['entity']}!"
+  "{id: 3, name: '#{params[:name]}'}"
 end
 
 get '/:entity/:id' do
-
+  "{id: 4, name: '#{params[:name]}'}"
 end
 
-post '/:entity' do
-
+get '/:entity' do
+  "{id: 5, name: '#{params[:name]}'}"
 end
+
+
