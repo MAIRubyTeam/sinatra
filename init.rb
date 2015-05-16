@@ -13,7 +13,7 @@ post '/:entity' do
   "{id: 1, name: '#{params[:name]}'}"
 end
 delete '/:entity/:id' do
-  "{id: 2, name: '#{params[:name]}'}"
+  "{name: '#{params[:name]}'}"
 end
 
 put '/:entity/:id' do

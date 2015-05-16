@@ -61,6 +61,8 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  activesupport
+  arel
   capybara
   json
   minitest
