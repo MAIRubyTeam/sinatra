@@ -12,4 +12,5 @@ gem "rack-test"
 gem "minitest-capybara"
 gem "capybara"
 gem "sqlite3"
-
+gem 'arel'
+gem 'activesupport'
