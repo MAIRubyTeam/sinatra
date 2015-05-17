@@ -2,6 +2,11 @@
 Ext.define("Hospital.view.pacient.Pacient",{
     extend: "Ext.panel.Panel",
 
+    requires: [
+        'Hospital.view.pacient.PacientController',
+        'Hospital.view.pacient.PacientModel'
+    ],
+
     controller: "pacient-pacient",
     viewModel: {
         type: "pacient-pacient"
