@@ -3,5 +3,7 @@ require 'minitest/autorun'
 require 'rack/test'
 require 'capybara'
 require 'capybara/dsl'
+require 'active_support/testing/autorun'
+require 'active_support/test_case'
 
 require './../init.rb'

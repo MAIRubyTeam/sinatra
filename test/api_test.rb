@@ -23,7 +23,7 @@ class ApiTest < MiniTest::Unit::TestCase
   def test_entity_save
   	page.driver.post("/users", name: "petya")
 
-  	assert page.status_code == 201
+  	assert page.status_code == 200
    	assert page.html == "{id: 1, name: 'petya'}", page.html
  end
 
@@ -36,37 +36,32 @@ class ApiTest < MiniTest::Unit::TestCase
   end
 
   def test_entity_changed
-  	page.driver.put("/users/id", name: "dima")
+  	test_get_entity_id
 
-  	assert page.status_code == 200
-  	assert page.html == "{id: 3, name: 'dima'}", page.html
+  	put '/users/4', name: "kolya"
+  	assert last_response.status == 200
+
+  	parsed_body = ActiveSupport::JSON.decode(last_response.body)
+  	assert_equal parsed_body["id"], 4, parsed_body
+  	assert_equal parsed_body["name"], "kolya", parsed_body
   end
 
   def test_get_entity_id
-  	@expected = { name: "ivan" }.to_json
-  	page.driver.get("/users/id", name: "ivan")
-
-  	response.body.should == @expected
-  	parsed_body = JSON.parse(response.body)
-
-  	assert parced_body.exist?
-  	assert parced_body.where(id: 4 ,name: "ivan")
-
-  	#user = ActiveSupport::JSON.decode(last_response.body)
-
-  	#assert last_response.ok?
-    #assert_match('application/json', last_response.content_type)
-
-  	assert page.status_code == 200
-  	assert page.html == "{id: 4, name: 'ivan'}", page.html
+  	get '/users/4'
+  	assert last_response.status == 200
+  	
+  	parsed_body = ActiveSupport::JSON.decode(last_response.body)
+  	assert_equal parsed_body["id"], 4, parsed_body
+  	assert_equal parsed_body["name"], "ivan", parsed_body
+  	
   end
 
   def test_get_entity
-  	page.driver.get("/users", name: "ivan")
-    #user = ActiveSupport::JSON.decode(last_response.body)
+  	get '/users'
+  	assert last_response.status == 200
 
-    #assert last_response.ok?
-    #assert_equal(false, last_response.successful?)
-    #assert_match('application/json', last_response.content_type)
+    parsed_body = ActiveSupport::JSON.decode(last_response.body)
+    assert_instance_of(Array, parsed_body)
+    assert_equal parsed_body.length, 2
   end
 end
