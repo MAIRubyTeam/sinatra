@@ -11,6 +11,10 @@ Ext.define('Hospital.Application', {
     stores: [
         // TODO: add global / shared stores here
     ],
+
+    controllers: [
+    	'Routing'
+    ],
     
     launch: function () {
         // TODO - Launch the application

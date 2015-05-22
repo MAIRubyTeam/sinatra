@@ -1,6 +1,7 @@
 
 Ext.define("Hospital.view.admin.Admin",{
     extend: "Ext.panel.Panel",
+    alias: 'widget.adminPanel',
 
     requires: [
         'Hospital.view.admin.AdminController',
@@ -17,23 +18,6 @@ Ext.define("Hospital.view.admin.Admin",{
     },
 
     items: [
-    {
-        xtype: 'panel',
-        region: 'north',
-        height: 20,
-        layout: {type: 'border'},
-        items: [
-        {
-            xtype: 'button',
-            text: 'Редактировать личные данные',
-            region: 'east' 
-        },
-        {
-            xtype: 'button',
-            text: 'Выйти',
-            region: 'east'
-        }]
-    },
     {
         xtype: 'panel',
         region: 'center',

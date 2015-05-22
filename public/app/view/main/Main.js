@@ -5,11 +5,19 @@
  *
  * TODO - Replace this content of this view to suite the needs of your application.
  */
+
+
+
 Ext.define('Hospital.view.main.Main', {
     extend: 'Ext.container.Container',
     requires: [
         'Hospital.view.main.MainController',
-        'Hospital.view.main.MainModel'
+        'Hospital.view.main.MainModel',
+        'Hospital.view.basegrid.View',
+        'Hospital.controller.Routing',
+        'Hospital.view.pacient.View',
+        'Hospital.view.doctor.View',
+        'Hospital.view.admin.Admin',
     ],
 
     xtype: 'app-main',
@@ -20,14 +28,67 @@ Ext.define('Hospital.view.main.Main', {
     },
 
     layout: {
-        type: 'card'
+        type: 'border'
     },
 
-    activeItem: 2,
-
     items: [
-        Ext.create("Hospital.view.doctor.Doctor"),
-        Ext.create("Hospital.view.pacient.Pacient"),
-        Ext.create("Hospital.view.admin.Admin")
+    {
+        xtype: 'panel',
+        region: 'north',
+        height: 20,
+        layout: {
+            type: 'border'
+        },
+        items: [
+        {
+            xtype: 'button',
+            text: 'Редактировать личные данные',
+            region: 'east' 
+        },
+        {
+            xtype: 'button',
+            text: 'Выйти',
+            region: 'east'
+        },
+        {   
+            xtype: 'segmentedbutton',         
+            region: 'west',
+            items: [{
+                text: 'Администраторы',
+                href: '/index.html#admin',
+                hrefTarget: '_self'
+            },{
+                text: 'Врачи',
+                href: '/index.html#doctor',
+                hrefTarget: '_self'
+            },{
+                text: 'Пациенты',
+                href: '/index.html#pacient',
+                hrefTarget: '_self'
+            }],
+        }
+        ]
+    },
+    {
+        xtype: 'panel',
+        reference: 'mainPanel',
+        region: 'center',
+        layout: { type: 'card'},
+        activeItem: 0,
+        items: [
+        {
+            xtype: 'adminPanel',
+            itemId: 'admin'
+        },
+        {
+            xtype: 'doctorPanel',
+            itemId: 'doctor'
+        },
+        {
+            xtype: 'pacientPanel',
+            itemId: 'pacient'
+        }
+        ]
+    }
     ]
 });
