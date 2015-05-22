@@ -10,22 +10,22 @@ get '/' do
 end
 
 post '/:entity' do
-  "{id: 1, name: '#{params[:name]}'}"
+  {id: 1, name: params[:name]}.to_json
 end
+
 delete '/:entity/:id' do
-  "{name: '#{params[:name]}'}"
 end
 
 put '/:entity/:id' do
-  "{id: 3, name: '#{params[:name]}'}"
+  {id: params[:id].to_i, name: params[:name]}.to_json
 end
 
 get '/:entity/:id' do
-  "{id: 4, name: '#{params[:name]}'}"
+  {id: params[:id].to_i, name: "ivan"}.to_json
 end
 
 get '/:entity' do
-  "{id: 5, name: '#{params[:name]}'}"
+  [{id: 1, name: "kolya"},{id: 2, name: "petya"}].to_json
 end
 
 
