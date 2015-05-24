@@ -1,7 +1,9 @@
 require 'sinatra'
 require 'sinatra/activerecord'
+require 'active_record'
 require 'rubygems'
 require 'json'
+require './config/environments.rb' 
 
 get '/' do
   "Everybody can see this page"

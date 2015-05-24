@@ -3,18 +3,21 @@ default: &default
   pool: 5
   timeout: 5000
 
-development: &main
+default_env:
+  <<: *default
+  database: db/test.sqlite3
+
+development: 
   adapter: mysql2
   encoding: utf8
   database: database_development
+  pool: 5
   username: root
   password: 1w1
-  host: 127.0.0.1
-  port: 3306
+  socket: '/var/run/mysqld/mysqld.sock'
 
 test:
   <<: *default
   database: db/test.sqlite3
 
-production:
-  <<: *main
+

@@ -10,5 +10,5 @@ end
 configure :test do
     ActiveRecord::Base.establish_connection(
     :adapter => 'sqlite3',
-    :database =>  'test.sqlite3.db')
+    :database =>  'db/test.sqlite3.db')
 end
