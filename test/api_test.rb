@@ -1,4 +1,3 @@
-ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path '../test_helper.rb', __FILE__
 
 class ApiTest < MiniTest::Unit::TestCase
