@@ -5,6 +5,5 @@ require 'capybara'
 require 'capybara/dsl'
 require 'active_support/testing/autorun'
 require 'active_support/test_case'
-require 'active_record'
 
 require './../init.rb'

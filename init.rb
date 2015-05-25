@@ -1,14 +1,18 @@
+# coding: utf-8
 require 'sinatra'
 require 'sinatra/activerecord'
-require 'active_record'
+require 'bundler/setup'
 require 'rubygems'
 require 'json'
-require './config/environments.rb' 
+require "rack/csrf"
+require './views/index_helper'
+
+use Rack::Session::Cookie, :secret => "smth"
+use Rack::Csrf, :raise => true
 
 get '/' do
-  "Everybody can see this page"
+  erb :index
 end
-
 post '/:entity' do
   {id: 1, name: params[:name]}.to_json
 end
@@ -27,5 +31,4 @@ end
 get '/:entity' do
   [{id: 1, name: "kolya"},{id: 2, name: "petya"}].to_json
 end
-
 
