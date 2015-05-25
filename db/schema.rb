@@ -11,10 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150524123649) do
+ActiveRecord::Schema.define(version: 20150525092626) do
+
+  create_table "analyses", force: :cascade do |t|
+    t.string "type",    limit: 255
+    t.string "comment", limit: 255
+  end
 
   create_table "doctors", force: :cascade do |t|
-    t.string "name", limit: 255
+    t.string "name",           limit: 255
+    t.string "specialization", limit: 255
+  end
+
+  create_table "doctors_pacients", force: :cascade do |t|
+    t.integer "doctor_id",  limit: 4
+    t.integer "pacient_id", limit: 4
   end
 
   create_table "groups", force: :cascade do |t|
@@ -23,38 +34,43 @@ ActiveRecord::Schema.define(version: 20150524123649) do
 
   add_index "groups", ["name"], name: "index_groups_on_name", unique: true, using: :btree
 
-  create_table "post10", force: :cascade do |t|
-    t.string "name", limit: 255, null: false
+  create_table "groups_url_types", force: :cascade do |t|
+    t.integer "url_type_id", limit: 4
+    t.integer "group_id",    limit: 4
   end
 
-  add_index "post10", ["name"], name: "index_post10_on_name", unique: true, using: :btree
-
-  create_table "post3", force: :cascade do |t|
-    t.string "name", limit: 255, null: false
+  create_table "groups_users", force: :cascade do |t|
+    t.integer "user_id",  limit: 4
+    t.integer "group_id", limit: 4
   end
 
-  add_index "post3", ["name"], name: "index_post3_on_name", unique: true, using: :btree
-
-  create_table "post5", force: :cascade do |t|
-    t.string "name", limit: 255, null: false
+  create_table "meterings", force: :cascade do |t|
+    t.integer "result", limit: 4
   end
 
-  add_index "post5", ["name"], name: "index_post5_on_name", unique: true, using: :btree
-
-  create_table "post8", force: :cascade do |t|
-    t.string "name", limit: 255, null: false
+  create_table "pacients_doctors", force: :cascade do |t|
+    t.integer "doctor_id",  limit: 4
+    t.integer "pacient_id", limit: 4
   end
 
-  add_index "post8", ["name"], name: "index_post8_on_name", unique: true, using: :btree
-
-  create_table "post9", force: :cascade do |t|
-    t.string "name", limit: 255, null: false
-  end
-
-  add_index "post9", ["name"], name: "index_post9_on_name", unique: true, using: :btree
-
-  create_table "users", force: :cascade do |t|
+  create_table "url_types", force: :cascade do |t|
     t.string "name", limit: 255
   end
+
+  add_index "url_types", ["name"], name: "index_url_types_on_name", unique: true, using: :btree
+
+  create_table "urls", force: :cascade do |t|
+    t.string  "url_pattern", limit: 255
+    t.string  "name",        limit: 255
+    t.integer "url_type_id", limit: 4
+    t.integer "sorder",      limit: 4
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string  "name",   limit: 30, null: false
+    t.integer "passwd", limit: 8,  null: false
+  end
+
+  add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
 
 end

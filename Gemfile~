@@ -1,8 +1,6 @@
 source :rubygems
  
 gem "sinatra"
-
-
 gem "json"
 gem "sinatra-activerecord"
 gem "rake"
@@ -23,4 +21,5 @@ group :development do
   gem "minitest"
   gem "rack-test"
 end
+
 

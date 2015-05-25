@@ -4,7 +4,7 @@ configure :development do
   :host     => "127.0.0.1",
   :username => "test",
   :password => "11111111",
-  :database => "ambulance")
+  :database => "database_development")
 end
 
 configure :test do
