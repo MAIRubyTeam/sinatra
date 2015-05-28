@@ -1,18 +1,23 @@
-# coding: utf-8
 require 'sinatra'
 require 'sinatra/activerecord'
-require 'bundler/setup'
+require 'active_record'
 require 'rubygems'
 require 'json'
-require "rack/csrf"
-require './views/index_helper'
+require './config/environments.rb' 
 
-use Rack::Session::Cookie, :secret => "smth"
-use Rack::Csrf, :raise => true
+  1ActiveRecord::Base.establish_connection(
+  :adapter  => "mysql2",
+  :host     => "127.0.0.1",
+  :username => "test",
+  :password => "11111111",
+  :database => "database_development")
+
+puts "!"
 
 get '/' do
-  erb :index
+  "Everybody can see this page"
 end
+
 post '/:entity' do
   {id: 1, name: params[:name]}.to_json
 end
@@ -31,4 +36,5 @@ end
 get '/:entity' do
   [{id: 1, name: "kolya"},{id: 2, name: "petya"}].to_json
 end
+
 
