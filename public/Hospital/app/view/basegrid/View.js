@@ -17,19 +17,30 @@ Ext.define("Hospital.view.basegrid.View",{
     plugins: {
         ptype: 'rowediting'
     },
+    
     tbar: [
-    {
-        xtype: 'button',
-        text: 'Добавить',
-        handler: 'onAddClick'
-    },
-    {
-        xtype: 'button',
-        text: 'Удалить',
-        handler: 'onDeleteClick'
-    },
-    {
-        xtype: 'textfield',
-        emptyText: 'Найти...'
-    }]
+        {
+            xtype: 'button',
+            text: 'Добавить',
+            handler: 'onAddClick'
+        },
+        {
+            xtype: 'button',
+            text: 'Удалить',
+            handler: 'onDeleteClick'
+        },
+        {
+            xtype: 'button',
+            text: 'Сохранить',
+            handler: 'onSaveClick'
+        },
+        {
+            xtype: 'button',
+            text: 'Обновить',
+            handler: 'onUpdateClick'
+        },
+        {
+            xtype: 'textfield',
+            emptyText: 'Найти...'
+        }]
 });

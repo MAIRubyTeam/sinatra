@@ -15,6 +15,9 @@ Ext.define('Hospital.Application', {
     controllers: [
     	'Routing'
     ],
+
+    models: [
+    'Pacient', 'Doctor', 'Analysis'],
     
     launch: function () {
         // TODO - Launch the application

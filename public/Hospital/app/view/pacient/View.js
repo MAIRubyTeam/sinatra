@@ -24,6 +24,7 @@ Ext.define("Hospital.view.pacient.View",{
             { text: 'Название анализа', dataIndex: 'analysis_name', flex: 1,
             editor: {xtype: 'textfield'}}
         ],
-        bind: {store: '{pacientStore}'}
+        bind: {store: '{pacientStore}'},
+        
     }]
 });
