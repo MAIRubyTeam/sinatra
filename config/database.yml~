@@ -1,14 +1,14 @@
 development: 
   adapter: mysql2
   encoding: utf8
-  database: database_development
+  database: test
   pool: 5
   username: test
   password: 11111111
   socket: '/var/run/mysqld/mysqld.sock'
 
 test:
-  database: db/test11.sqlite3
+  database: db/test.sqlite3
   adapter: sqlite3
   pool: 5
   timeout: 5000
