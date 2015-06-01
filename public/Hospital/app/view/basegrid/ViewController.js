@@ -34,6 +34,9 @@ Ext.define('Hospital.view.basegrid.ViewController', {
     onDeleteClick: function()
     {
         var view = this.getView();
-        view.getStore().remove(view.getSelectionModel().getSelection());
+        var store = view.getStore();
+        var selmodel = view.getSelectionModel();
+        if(selmodel.getCount() != 0)
+            store.remove(selmodel.getSelection());
     }
 });

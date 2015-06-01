@@ -17,6 +17,10 @@ Ext.define("Hospital.view.basegrid.View",{
     plugins: {
         ptype: 'rowediting'
     },
+
+    selModel:{
+        mode: 'SIMPLE'
+    },
     
     tbar: [
         {
