@@ -22,17 +22,32 @@ end
 #params
 #insert
 post '/:entity' do
-  puts params.inspect
   entity = Arel::Table.new(params[:entity])
+
   insert_manager = Arel::InsertManager.new(ActiveRecord::Base)
-  insert_manager.insert([[entity[:name], params[:name]]])
+  p parameters =  params.to_a.slice(0...-3)
+
+  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+
+  for i in 0...parameters.size
+    tmp = parameters[i][0]
+    tmp.to_sym
+
+    parameters[i][0] = entity[tmp]
+    p entity[parameters[i][0]]
+  end
+
+  puts "----------------------------------"
+  puts parameters
+  insert_manager.insert(parameters)
   ActiveRecord::Base.connection.insert(insert_manager.to_sql).to_json
+
 end
 
 #delete
 delete '/:entity/:id' do
   entity = Arel::Table.new(params[:entity])
-  delete_manager = Arel::DeleteManager.new(ActiveRecord::Base)
+  delete_manager = Arel ::DeleteManager.new(ActiveRecord::Base)
   delete_manager.from(entity).where(entity[:id])
   ActiveRecord::Base.connection.delete(delete_manager.to_sql).to_json
 end
@@ -50,15 +65,27 @@ end
 #select
 get '/:entity/:id' do
   #{id: params[:id].to_i, name: "ivan"}.to_json
+  puts params.inspect
+  puts "?????????????"
   entity = Arel::Table.new(params[:entity])
-  select_manager = entity.project(Arel.star).where(entitys[:id])
+  select_manager = entity.project(Arel.star).where(entity[:id])
   ActiveRecord::Base.connection.select_one(select_manager.to_sql).to_json
 end
 
 get '/:entity' do
-  puts params.inspect
+ 
   entity = Arel::Table.new(params[:entity])
+  puts
+  
   select_manager = entity.project(Arel.star)
+  puts select_manager
+
+  p params[:entity]
+  puts "-----------"
+
+  #entity.columns
+  #puts "-----------"
+
   ActiveRecord::Base.connection.select_all(select_manager.to_sql).to_json
   #[{id: 1, name: "kolya"},{id: 2, name: "petya"}].to_json
 end

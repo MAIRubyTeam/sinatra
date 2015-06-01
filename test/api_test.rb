@@ -15,7 +15,7 @@ class ApiTest < MiniTest::Unit::TestCase
 
   def check_fields(id, name)
     parsed_body = ActiveSupport::JSON.decode(last_response.body)
-    assert_equal parsed_body["id"], id, parsed_body
+    assert_equal parsed_body["passwd"], passwd, parsed_body
     assert_equal parsed_body["name"], name, parsed_body
   end
 
@@ -25,10 +25,10 @@ class ApiTest < MiniTest::Unit::TestCase
   end
 
   def test_entity_create
-    post("/users", name: "petya")
+    post("/users", name: "petya", passwd: 123)
 
     assert last_response.status == 200
-    check_fields(1, "petya")
+    check_fields(123, "petya")
   end
 =begin
   def test_entity_delete
