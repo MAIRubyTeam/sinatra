@@ -25,6 +25,10 @@ end
 get '/' do
   erb :index
 end
+
+get '/app' do
+  erb :app
+end
 #params
 #insert
 post '/:entity' do
