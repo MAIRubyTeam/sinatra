@@ -4,9 +4,8 @@ require 'sinatra/activerecord'
 require 'json'
 require 'yaml'
 require 'rack/csrf'
-#require './views/index_helper'
+#require './views/index_helper' Но 
 require "#{__dir__}/views/index_helper"
-require "#{__dir__}/views/test_helper"
 
 current_env = ENV["RACK_ENV"] ? ENV["RACK_ENV"] : "development"
 db_config = YAML::load_file("#{__dir__}/config/database.yml")
