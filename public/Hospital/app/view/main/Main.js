@@ -55,15 +55,15 @@ Ext.define('Hospital.view.main.Main', {
             region: 'west',
             items: [{
                 text: 'Администраторы',
-                href: '/Hospital/index.html#admin',
+                href: '#admin',
                 hrefTarget: '_self'
             },{
                 text: 'Врачи',
-                href: '/Hospital/index.html#doctor',
+                href: '#doctor',
                 hrefTarget: '_self'
             },{
                 text: 'Пациенты',
-                href: '/Hospital/index.html#pacient',
+                href: '#pacient',
                 hrefTarget: '_self'
             }],
         }
