@@ -15,7 +15,7 @@ class ApiTest < MiniTest::Unit::TestCase
 
   def check_fields(id, name)
     parsed_body = ActiveSupport::JSON.decode(last_response.body)
-    assert_equal parsed_body["passwd"], passwd, parsed_body
+    assert_equal parsed_body["id"], id, parsed_body
     assert_equal parsed_body["name"], name, parsed_body
   end
 
@@ -25,12 +25,12 @@ class ApiTest < MiniTest::Unit::TestCase
   end
 
   def test_entity_create
-    post("/users", name: "petya", passwd: 123)
+    post("/users", name: "petya")
 
     assert last_response.status == 200
-    check_fields(123, "petya")
+    check_fields(5, "petya")
   end
-=begin
+
   def test_entity_delete
     delete 'users/1'
 
@@ -40,17 +40,17 @@ class ApiTest < MiniTest::Unit::TestCase
   def test_entity_update
     test_get_entity_id
 
-    put '/users/4', name: "petya"
+    put '/users/1', name: "petya"
     assert last_response.status == 200
 
-    check_fields(4, "petya")
+    check_fields(1, "petya")
   end
 
   def test_get_entity_id
-    get '/users/4'
+    get '/users/1'
     assert last_response.status == 200
 
-    check_fields(4, "ivan")
+    check_fields(1, "petya")
   end
 
   def test_get_entity
@@ -59,7 +59,7 @@ class ApiTest < MiniTest::Unit::TestCase
 
     parsed_body = ActiveSupport::JSON.decode(last_response.body)
     assert_instance_of(Array, parsed_body)
-    assert_equal parsed_body.length, 2
+    assert_equal parsed_body.length, 1
   end
-=end
+
 end

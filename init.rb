@@ -16,6 +16,12 @@ use Rack::Session::Cookie, :secret => "smth"
 # use Rack::Csrf, :raise => true
 enable :logging
 
+def delete_bad_params(parameters)
+  parameters.delete("entity")
+  parameters.delete("captures")
+  parameters.delete("splat")
+end
+
 get '/' do
   erb :index
 end
@@ -25,21 +31,22 @@ post '/:entity' do
   entity = Arel::Table.new(params[:entity])
 
   insert_manager = Arel::InsertManager.new(ActiveRecord::Base)
-  p parameters =  params.to_a.slice(0...-3)
 
+  parameters = params
+  delete_bad_params(parameters)
+  
+  par = parameters.to_a
   puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
   for i in 0...parameters.size
-    tmp = parameters[i][0]
+    tmp = par[i][0]
     tmp.to_sym
-
-    parameters[i][0] = entity[tmp]
-    p entity[parameters[i][0]]
+    par[i][0] = entity[tmp]
   end
 
   puts "----------------------------------"
-  puts parameters
-  insert_manager.insert(parameters)
+  #puts parameters
+  insert_manager.insert(par)
   ActiveRecord::Base.connection.insert(insert_manager.to_sql).to_json
 
 end
@@ -47,7 +54,7 @@ end
 #delete
 delete '/:entity/:id' do
   entity = Arel::Table.new(params[:entity])
-  delete_manager = Arel ::DeleteManager.new(ActiveRecord::Base)
+  delete_manager = Arel::DeleteManager.new(ActiveRecord::Base)
   delete_manager.from(entity).where(entity[:id])
   ActiveRecord::Base.connection.delete(delete_manager.to_sql).to_json
 end
@@ -58,7 +65,24 @@ put '/:entity/:id' do
   entity = Arel::Table.new(params[:entity])
   update_manager = Arel::UpdateManager.new(ActiveRecord::Base)
   update_manager.table(entity).where(entity[:id])
-  update_manager.set([[entity[:name], params[:name]]])
+
+  parameters = params
+  delete_bad_params(parameters)
+
+  par = parameters.to_a
+  puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4"
+
+  for i in 0...parameters.size
+    puts "***************************"
+    #p par[i][0]
+    tmp = par[i][0]
+    tmp.to_sym
+    par[i][0] = entity[tmp]
+    #p entity[par[i][0]]
+  end
+
+  puts "----------------------------------"
+  update_manager.set(par)
   ActiveRecord::Base.connection.update(update_manager.to_sql).to_json
 end
 
@@ -81,6 +105,7 @@ get '/:entity' do
   puts select_manager
 
   p params[:entity]
+
   puts "-----------"
 
   #entity.columns
