@@ -1,0 +1,30 @@
+<html>
+<head>
+    <title>Hospital</title>
+    <link rel = "stylesheet"
+    href = "../Hospital/ext/packages/ext-theme-crisp/build/ext-theme-crisp-all-debug.scss">
+    <script src = "../Hospital/ext/build/ext.js"></script>
+
+<script>
+
+Ext.syncRequire(['Ext.app.Application']);
+
+Ext.application(
+{
+    name: 'Hospital',
+    appFolder: 'Hospital/app',
+    controllers: ['Routing'],
+
+    models: [
+    'Pacient', 'Doctor', 'Analysis'],
+
+    views: [
+    'admin.Admin', 'basegrid.View', 'doctor.View', 'main.Main', 'pacient.View'],
+
+    autoCreateViewport: 'Hospital.view.main.Main'
+})
+</script>
+
+</head>
+<body></body>
+</html>
