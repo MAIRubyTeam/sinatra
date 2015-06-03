@@ -24,6 +24,11 @@ class ApiTest < MiniTest::Unit::TestCase
     assert page.has_content?('Everybody can see this page')
   end
 
+  def test_fields
+    user = users(:user_one)
+    assert_not_nil user.name 
+  end
+=begin
   def test_entity_create
     post("/users", name: "petya")
 
@@ -61,5 +66,5 @@ class ApiTest < MiniTest::Unit::TestCase
     assert_instance_of(Array, parsed_body)
     assert_equal parsed_body.length, 1
   end
-
+=end
 end
