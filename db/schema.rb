@@ -72,8 +72,7 @@ ActiveRecord::Schema.define(version: 20150531134724) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string  "name",   limit: 30, null: false
-    t.integer "passwd", limit: 8
+    t.string "name", limit: 30, null: false
   end
 
   add_index "users", ["name"], name: "index_users_on_name", unique: true
