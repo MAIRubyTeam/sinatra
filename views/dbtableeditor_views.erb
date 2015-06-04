@@ -1,5 +1,5 @@
 <% #BASEGRID %>
-Ext.define("Hospital.view.basegrid.View",{
+Ext.define("DBTableEditor.view.basegrid.View",{
     extend: "Ext.grid.Panel",
     alias: 'widget.basegrid',
 
@@ -48,7 +48,7 @@ Ext.define("Hospital.view.basegrid.View",{
 
 <% #RESTVIEWS %>
 <% column_hash.each do |key, value| %>
-    Ext.define('Hospital.view.<%= key %>.View', {
+    Ext.define('DBTableEditor.view.<%= key %>.View', {
         extend: 'Ext.panel.Panel',
         alias: 'widget.<%= key %>Panel',
         
@@ -69,7 +69,7 @@ Ext.define("Hospital.view.basegrid.View",{
 <% end %>
 
 <% #MAIN %>
-Ext.define('Hospital.view.main.Main', {
+Ext.define('DBTableEditor.view.main.Main', {
     extend: 'Ext.container.Container',
 
     xtype: 'app-main',

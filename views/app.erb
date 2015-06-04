@@ -1,23 +1,23 @@
 <html>
 <head>
-    <title>Hospital</title>
+    <title>DBTableEditor</title>
     <link rel = "stylesheet"
-    href = "../Hospital/ext/packages/ext-theme-aria/build/resources/ext-theme-aria-all.css">
-    <script src = "../Hospital/ext/build/ext.js"></script>
+    href = "../DBTableEditor/ext/packages/ext-theme-aria/build/resources/ext-theme-aria-all.css">
+    <script src = "../DBTableEditor/ext/build/ext.js"></script>
 
 <script>
 
 Ext.syncRequire(['Ext.app.Application']);
 
-<%= erb :hospital_models, :locals => {:column_hash => column_hash} %>
-<%= erb :hospital_viewcontrollers, :locals => {:column_hash => column_hash} %>
-<%= erb :hospital_viewmodels, :locals => {:column_hash => column_hash} %>
-<%= erb :hospital_views, :locals => {:column_hash => column_hash} %>
-<%= erb :hospital_controllers, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_models, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_viewcontrollers, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_viewmodels, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_views, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_controllers, :locals => {:column_hash => column_hash} %>
 
 Ext.application(
 {
-    name: 'Hospital',
+    name: 'DBTableEditor',
     controllers: ['Routing'],
     models: [
     <% column_hash.each do |key, value| %>
@@ -27,9 +27,9 @@ Ext.application(
     <% column_hash.each do |key, value| %>
         '<%= key %>.View',
     <% end %>],
-    //appFolder: 'Hospital/app',
+    //appFolder: 'DBTableEditor/app',
 
-    autoCreateViewport: 'Hospital.view.main.Main'
+    autoCreateViewport: 'DBTableEditor.view.main.Main'
 })
 </script>
 

@@ -1,12 +1,12 @@
 <% column_hash.each do |key, value| %>
-	Ext.define('Hospital.view.<%= key %>.ViewController', {
+	Ext.define('DBTableEditor.view.<%= key %>.ViewController', {
 	    extend: 'Ext.app.ViewController',
 	    alias: 'controller.<%= key %>-view'
 	    
 	});
 <% end %>
 
-Ext.define('Hospital.view.basegrid.ViewController', {
+Ext.define('DBTableEditor.view.basegrid.ViewController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.basegrid-view',
     
@@ -49,7 +49,7 @@ Ext.define('Hospital.view.basegrid.ViewController', {
     }
 });
 
-Ext.define('Hospital.view.main.MainController', {
+Ext.define('DBTableEditor.view.main.MainController', {
     extend: 'Ext.app.ViewController',
 
     alias: 'controller.main',
