@@ -3,7 +3,6 @@ require File.expand_path '../test_helper.rb', __FILE__
 class ApiTest < MiniTest::Unit::TestCase
   include Capybara::DSL
   include Rack::Test::Methods
-
   # Capybara.default_driver = :selenium # <-- use Selenium driver
   def setup
     Capybara.app = Sinatra::Application.new
@@ -12,59 +11,71 @@ class ApiTest < MiniTest::Unit::TestCase
   def app
     Sinatra::Application
   end
-
-  def check_fields(id, name)
+=begin
+  def response_body(last_response)
+    get "/users"
     parsed_body = ActiveSupport::JSON.decode(last_response.body)
-    assert_equal parsed_body["id"], id, parsed_body
-    assert_equal parsed_body["name"], name, parsed_body
+    p "PARSED_BODY"
+    p parsed_body
+    parsed_body
+  end
+=end
+  def check_fields(id, name, i)
+    get "/users"
+    parsed_body = ActiveSupport::JSON.decode(last_response.body)
+    #p parsed_body = response_body(last_response)
+    p parsed_body
+    p assert_equal parsed_body[i]["id"], id, parsed_body
+    p assert_equal parsed_body[i]["name"], name, parsed_body
+    p parsed_body[i]["id"]
+    p parsed_body[i]["name"]
   end
 
   def home_page
     visit '/'
-    assert page.has_content?('Everybody can see this page')
   end
-=begin
-  def test_fields
-    user = users(:user_one)
-    assert_not_nil user.name 
-  end
-=end
+
   def test_entity_create
-    post("/users", name: "petya")
-
+    post("/users", name: "vasya5")
     assert last_response.status == 200
-    check_fields(5, "petya")
+    #p response_body(last_response)
+    p "!!!!!!!!!!!!!!!!!!!!"
+    check_fields(5, "vasya5", 4)
+    puts "________create"
   end
 
+=begin
   def test_entity_delete
     delete 'users/1'
 
     assert last_response.status == 200
+    puts "________delete"
   end
-=begin
+=end
+
   def test_entity_update
     test_get_entity_id
 
-    put '/users/4', name: "petya3"
+    put '/users/1', name: "petya1"
     assert last_response.status == 200
 
-    check_fields(4, "petya3")
+    check_fields(1, "petya1", 1)
   end
 
   def test_get_entity_id
+    test_get_entity
+
     get '/users/1'
     assert last_response.status == 200
-
-    check_fields(1, "petya")
+    check_fields(2, "vasya2", 1)
+    puts "________entity_id"
   end
 
   def test_get_entity
-    get '/users'
-    assert last_response.status == 200
-
-    parsed_body = ActiveSupport::JSON.decode(last_response.body)
-    assert_instance_of(Array, parsed_body)
-    assert_equal parsed_body.length, 1
+    get "/users"
+    #response_body(last_response)
+    check_fields(2, "vasya2", 1)
+    puts "________entity"
   end
-=end
+  
 end

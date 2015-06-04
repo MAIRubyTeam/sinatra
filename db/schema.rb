@@ -11,65 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150531134724) do
-
-  create_table "analysis", force: :cascade do |t|
-    t.string "observation"
-    t.string "result"
-  end
-
-  create_table "doctors", force: :cascade do |t|
-    t.string "pacient_policy"
-    t.string "pacient_name"
-  end
-
-  create_table "doctors_pacients", force: :cascade do |t|
-    t.integer "doctor_id"
-    t.integer "pacient_id"
-  end
-
-  create_table "groups", force: :cascade do |t|
-    t.string "name", null: false
-  end
-
-  add_index "groups", ["name"], name: "index_groups_on_name", unique: true
-
-  create_table "groups_url_types", force: :cascade do |t|
-    t.integer "url_type_id"
-    t.integer "group_id"
-  end
-
-  create_table "groups_users", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "group_id"
-  end
-
-  create_table "meterings", force: :cascade do |t|
-    t.integer "result"
-  end
-
-  create_table "pacients", force: :cascade do |t|
-    t.string   "analysis_name", null: false
-    t.datetime "analysis_date"
-  end
-
-  create_table "pacients_doctors", force: :cascade do |t|
-    t.integer "doctor_id"
-    t.integer "pacient_id"
-  end
-
-  create_table "url_types", force: :cascade do |t|
-    t.string "name"
-  end
-
-  add_index "url_types", ["name"], name: "index_url_types_on_name", unique: true
-
-  create_table "urls", force: :cascade do |t|
-    t.string  "url_pattern"
-    t.string  "name"
-    t.integer "url_type_id"
-    t.integer "sorder"
-  end
+ActiveRecord::Schema.define(version: 20150425113231) do
 
   create_table "users", force: :cascade do |t|
     t.string "name", limit: 30, null: false
