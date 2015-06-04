@@ -4,7 +4,7 @@ require 'sinatra/activerecord'
 require 'json'
 require 'yaml'
 require 'rack/csrf'
-#require './views/index_helper'
+#require './views/index_helper' Но 
 require "#{__dir__}/views/index_helper"
 
 current_env = ENV["RACK_ENV"] ? ENV["RACK_ENV"] : "development"
@@ -29,6 +29,7 @@ end
 get '/' do
   erb :index
 end
+<<<<<<< HEAD
 
 get '/app' do
   table = Arel::Table.new("information_schema.TABLES")
@@ -66,6 +67,8 @@ get '/app' do
 
   erb :app, :locals => {:column_hash => column_hash.except('doctors_pacients', 'groups', 'groups_url_types', 'groups_users', 'meterings', 'pacients_doctors', 'schema_migrations', 'url_types', 'urls', 'users')}
 end
+=======
+>>>>>>> d5e084cc348384261c872fee6b2f9e1a9b636ff3
 #params
 #insert
 post '/:entity' do
@@ -75,7 +78,7 @@ post '/:entity' do
 
   parameters = params
   delete_bad_params(parameters)
-  
+   
   par = parameters.to_a
   puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
@@ -103,10 +106,13 @@ end
 #update
 put '/:entity/:id' do
   #{id: params[:id].to_i, name: params[:name]}.to_json
+  p "4"
   entity = Arel::Table.new(params[:entity])
+  p "5"
   update_manager = Arel::UpdateManager.new(ActiveRecord::Base)
+  p "6"
   update_manager.table(entity).where(entity[:id])
-
+  p "7"
   parameters = params
   delete_bad_params(parameters)
 
@@ -123,6 +129,7 @@ put '/:entity/:id' do
   end
 
   puts "----------------------------------"
+  p par
   update_manager.set(par)
   ActiveRecord::Base.connection.update(update_manager.to_sql).to_json
 end
@@ -130,11 +137,14 @@ end
 #select
 get '/:entity/:id' do
   #{id: params[:id].to_i, name: "ivan"}.to_json
-  puts params.inspect
+  #puts params.inspect
   puts "?????????????"
   entity = Arel::Table.new(params[:entity])
+  p "1"
   select_manager = entity.project(Arel.star).where(entity[:id])
+  p '2'
   ActiveRecord::Base.connection.select_one(select_manager.to_sql).to_json
+  p "3"
 end
 
 get '/:entity' do
