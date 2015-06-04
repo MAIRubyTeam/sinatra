@@ -1,27 +1,35 @@
 <html>
 <head>
-    <title>Hospital</title>
+    <title>DBTableEditor</title>
     <link rel = "stylesheet"
-    href = "../Hospital/ext/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all.css">
-    <script src = "../Hospital/ext/build/ext.js"></script>
+    href = "../DBTableEditor/ext/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all.css">
+    <script src = "../DBTableEditor/ext/build/ext-all.js"></script>
 
 <script>
 
 Ext.syncRequire(['Ext.app.Application']);
 
+<%= erb :dbtableeditor_models, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_viewcontrollers, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_viewmodels, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_views, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_controllers, :locals => {:column_hash => column_hash} %>
+
 Ext.application(
 {
-    name: 'Hospital',
-    appFolder: 'Hospital/app',
+    name: 'DBTableEditor',
     controllers: ['Routing'],
-
     models: [
-    'Pacient', 'Doctor', 'Analysis'],
+    <% column_hash.each do |key, value| %>
+        '<%= key.capitalize %>',
+    <% end %>],
+    views: ['basegrid.View', 'main.Main', 
+    <% column_hash.each do |key, value| %>
+        '<%= key %>.View',
+    <% end %>],
+    //appFolder: 'DBTableEditor/app',
 
-    views: [
-    'admin.Admin', 'basegrid.View', 'doctor.View', 'main.Main', 'pacient.View'],
-
-    autoCreateViewport: 'Hospital.view.main.Main'
+    autoCreateViewport: 'DBTableEditor.view.main.Main'
 })
 </script>
 

@@ -1,8 +1,8 @@
-	Ext.define('Hospital.view.basegrid.ViewModel', {
+	Ext.define('DBTableEditor.view.basegrid.ViewModel', {
     extend: 'Ext.app.ViewModel',
     alias: 'viewmodel.basegrid-view',
     data: {
-        name: 'Hospital',
+        name: 'DBTableEditor',
         /*infoHtml: '<h2>Информация',
         searchLabel: 'SEARCH:',
         columnsArray: [

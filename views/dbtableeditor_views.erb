@@ -1,0 +1,135 @@
+<% #BASEGRID %>
+Ext.define("DBTableEditor.view.basegrid.View",{
+    extend: "Ext.grid.Panel",
+    alias: 'widget.basegrid',
+
+    controller: "basegrid-view",
+    viewModel: {
+        type: "basegrid-view"
+    },
+
+    region: 'center',
+    selModel: 'rowmodel',
+    plugins: {
+        ptype: 'rowediting'
+    },
+
+    selModel:{
+        mode: 'SIMPLE'
+    },
+    
+    tbar: [
+        {
+            xtype: 'button',
+            text: 'Добавить',
+            handler: 'onAddClick'
+        },
+        {
+            xtype: 'button',
+            text: 'Удалить',
+            handler: 'onDeleteClick'
+        },
+        {
+            xtype: 'button',
+            text: 'Сохранить',
+            handler: 'onSaveClick'
+        },
+        {
+            xtype: 'button',
+            text: 'Обновить',
+            handler: 'onUpdateClick'
+        },
+        {
+            xtype: 'textfield',
+            emptyText: 'Найти...'
+        }]
+});
+
+
+<% #RESTVIEWS %>
+<% column_hash.each do |key, value| %>
+    Ext.define('DBTableEditor.view.<%= key %>.View', {
+        extend: 'Ext.panel.Panel',
+        alias: 'widget.<%= key %>Panel',
+        
+        controller: "<%= key %>-view",
+        viewModel: { type: "<%= key %>-view"},
+
+        items:[
+        {
+            xtype: 'basegrid',
+            columns:[
+                <% value.each do |elem| %>
+                    { text: '<%= elem %>', dataIndex: '<%= elem %>', editor: {xtype: 'textfield'}},
+                <% end %>
+            ],
+            bind: {store: '{<%= key %>Store}'}
+        }]
+    });
+<% end %>
+
+<% #MAIN %>
+Ext.define('DBTableEditor.view.main.Main', {
+    extend: 'Ext.container.Container',
+
+    xtype: 'app-main',
+    
+    controller: 'main',
+    viewModel: {
+        type: 'main'
+    },
+
+    layout: {
+        type: 'border'
+    },
+
+    items: [
+    {
+        xtype: 'panel',
+        region: 'north',
+        height: 20,
+        layout: {
+            type: 'border'
+        },
+        items: [
+        {
+            xtype: 'button',
+            text: 'Редактировать личные данные',
+            region: 'east' 
+        },
+        {
+            xtype: 'button',
+            text: 'Выйти',
+            region: 'east'
+        },
+        {   
+            xtype: 'segmentedbutton',         
+            region: 'west',
+            items: [
+            <% column_hash.each do |key, value| %>
+                {
+                    text: '<%= key %>',
+                    href: '#<%= key %>',
+                    hrefTarget: '_self'
+                },
+            <% end %>],
+        }
+        ]
+    },
+    {
+        xtype: 'panel',
+        reference: 'mainPanel',
+        region: 'center',
+        layout: { type: 'card'},
+        activeItem: 0,
+        items: [
+        <% column_hash.each do |key, value| %>
+            {
+                xtype: '<%= key %>Panel',
+                itemId: '<%= key %>'
+            },
+        <% end %>
+        ]
+    }
+    ]
+});
