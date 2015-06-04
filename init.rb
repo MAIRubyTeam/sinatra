@@ -29,7 +29,6 @@ end
 get '/' do
   erb :index
 end
-<<<<<<< HEAD
 
 get '/app' do
   table = Arel::Table.new("information_schema.TABLES")
@@ -67,8 +66,7 @@ get '/app' do
 
   erb :app, :locals => {:column_hash => column_hash.except('doctors_pacients', 'groups', 'groups_url_types', 'groups_users', 'meterings', 'pacients_doctors', 'schema_migrations', 'url_types', 'urls', 'users')}
 end
-=======
->>>>>>> d5e084cc348384261c872fee6b2f9e1a9b636ff3
+
 #params
 #insert
 post '/:entity' do
