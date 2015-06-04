@@ -1,4 +1,47 @@
-Ext.define('Hospital.model.Doctor', {
-	extend: 'Ext.data.Model',
-	fields: <%= fields %>
-})
+Ext.define('Hospital.view.main.Main', {
+    extend: 'Ext.container.Container',
+
+    xtype: 'app-main',
+    
+    controller: 'main',
+    viewModel: {
+        type: 'main'
+    },
+
+    layout: {
+        type: 'border'
+    },
+
+    items: [
+    {
+        xtype: 'panel',
+        region: 'north',
+        height: 20,
+        layout: {
+            type: 'border'
+        },
+        items: [
+        {
+            xtype: 'button',
+            text: 'Редактировать личные данные',
+            region: 'east' 
+        },
+        {
+            xtype: 'button',
+            text: 'Выйти',
+            region: 'east'
+        },
+        {   
+            xtype: 'segmentedbutton',         
+            region: 'west',
+            items: [
+            <% column_hash.each do |key, value| %>
+                {
+                    text: '<%= key %>',
+                    href: '#<%= key %>',
+                    hrefTarget: '_self'
+                },
+            <% end %>],
+        }
+        ]
+    },

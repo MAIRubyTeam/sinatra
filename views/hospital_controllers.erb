@@ -34,6 +34,7 @@ Ext.define('Hospital.controller.Routing',{
 
 	onNavigate : function(id) {
 		var me = this;
+		console.log(111);
 
 		newCard = me.cards.setActiveItem(id);
 	},
@@ -44,4 +45,4 @@ Ext.define('Hospital.controller.Routing',{
 		mainView = this.application.getMainView();
 		this.cards = mainView.lookupReference('mainPanel');
 	}
-})
+});

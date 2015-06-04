@@ -2,24 +2,32 @@
 <head>
     <title>Hospital</title>
     <link rel = "stylesheet"
-    href = "../Hospital/ext/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all.css">
+    href = "../Hospital/ext/packages/ext-theme-aria/build/resources/ext-theme-aria-all.css">
     <script src = "../Hospital/ext/build/ext.js"></script>
 
 <script>
 
 Ext.syncRequire(['Ext.app.Application']);
 
+<%= erb :hospital_models, :locals => {:column_hash => column_hash} %>
+<%= erb :hospital_viewcontrollers, :locals => {:column_hash => column_hash} %>
+<%= erb :hospital_viewmodels, :locals => {:column_hash => column_hash} %>
+<%= erb :hospital_views, :locals => {:column_hash => column_hash} %>
+<%= erb :hospital_controllers, :locals => {:column_hash => column_hash} %>
+
 Ext.application(
 {
     name: 'Hospital',
-    appFolder: 'Hospital/app',
     controllers: ['Routing'],
-
     models: [
-    'Pacient', 'Doctor', 'Analysis'],
-
-    views: [
-    'admin.Admin', 'basegrid.View', 'doctor.View', 'main.Main', 'pacient.View'],
+    <% column_hash.each do |key, value| %>
+        '<%= key.capitalize %>',
+    <% end %>],
+    views: ['basegrid.View', 'main.Main', 
+    <% column_hash.each do |key, value| %>
+        '<%= key %>.View',
+    <% end %>],
+    //appFolder: 'Hospital/app',
 
     autoCreateViewport: 'Hospital.view.main.Main'
 })

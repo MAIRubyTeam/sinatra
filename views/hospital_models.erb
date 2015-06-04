@@ -1,0 +1,6 @@
+<% column_hash.each do |key, value| %>
+	Ext.define('Hospital.model.<%= key.capitalize %>', {
+		extend: 'Ext.data.Model',
+		fields: <%= value %>,
+	});
+<% end %>
