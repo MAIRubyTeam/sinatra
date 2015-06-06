@@ -4,7 +4,6 @@ require 'sinatra/activerecord'
 require 'json'
 require 'yaml'
 require 'rack/csrf'
-#require './views/index_helper' Но 
 require "#{__dir__}/views/index_helper"
 
 current_env = ENV["RACK_ENV"] ? ENV["RACK_ENV"] : "development"
@@ -67,8 +66,6 @@ get '/app' do
   erb :app, :locals => {:column_hash => column_hash.except('doctors_pacients', 'groups', 'groups_url_types', 'groups_users', 'meterings', 'pacients_doctors', 'schema_migrations', 'url_types', 'urls', 'users')}
 end
 
-#params
-#insert
 post '/:entity' do
   entity = Arel::Table.new(params[:entity])
   insert_manager = Arel::InsertManager.new(ActiveRecord::Base)
@@ -77,7 +74,6 @@ post '/:entity' do
   delete_bad_params(parameters)
    
   par = parameters.to_a
-  #puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
   for i in 0...parameters.size
     tmp = par[i][0]
@@ -85,13 +81,10 @@ post '/:entity' do
     par[i][0] = entity[tmp]
   end
 
-  #puts "----------------------------------"
-  #puts parameters
   insert_manager.insert(par)
   ActiveRecord::Base.connection.insert(insert_manager.to_sql).to_json
 end
 
-#delete
 delete '/:entity/:id' do
   entity = Arel::Table.new(params[:entity])
   delete_manager = Arel::DeleteManager.new(ActiveRecord::Base)
@@ -99,50 +92,35 @@ delete '/:entity/:id' do
   ActiveRecord::Base.connection.delete(delete_manager.to_sql).to_json
 end
 
-#update
 put '/:entity/:id' do
   #{id: params[:id].to_i, name: params[:name]}.to_json
   entity = Arel::Table.new(params[:entity])
   update_manager = Arel::UpdateManager.new(ActiveRecord::Base)
   update_manager.table(entity).where(entity[:id])
+
   parameters = params
   delete_bad_params(parameters)
 
   par = parameters.to_a
 
   for i in 0...parameters.size
-    #p par[i][0]
     tmp = par[i][0]
     tmp.to_sym
     par[i][0] = entity[tmp]
-    #p entity[par[i][0]]
   end
-  #p par
   update_manager.set(par)
   ActiveRecord::Base.connection.update(update_manager.to_sql).to_json
 end
 
-#select
 get '/:entity/:id' do
-  #{id: params[:id].to_i, name: "ivan"}.to_json
-  #puts params.inspect
-  #puts "?????????????"
   entity = Arel::Table.new(params[:entity])
   select_manager = entity.project(Arel.star).where(entity[:id])
   ActiveRecord::Base.connection.select_one(select_manager.to_sql).to_json
 end
 
 get '/:entity' do
- 
   entity = Arel::Table.new(params[:entity])
-  
   select_manager = entity.project(Arel.star)
-
-  #p params[:entity]
-
-  #entity.columns
-  #puts "-----------"
-
   ActiveRecord::Base.connection.select_all(select_manager.to_sql).to_json
   #[{id: 1, name: "kolya"},{id: 2, name: "petya"}].to_json
 end
