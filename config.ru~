@@ -4,5 +4,4 @@ require 'rubygems'
 require 'sinatra'
 require "#{path}/init"
 
-run Sinatra::Application
-
+run Init

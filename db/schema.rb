@@ -14,67 +14,67 @@
 ActiveRecord::Schema.define(version: 20150531134724) do
 
   create_table "analysis", force: :cascade do |t|
-    t.string "observation"
-    t.string "result"
+    t.string "observation", limit: 255
+    t.string "result",      limit: 255
   end
 
   create_table "doctors", force: :cascade do |t|
-    t.string "pacient_policy"
-    t.string "pacient_name"
+    t.string "pacient_policy", limit: 255
+    t.string "pacient_name",   limit: 255
   end
 
   create_table "doctors_pacients", force: :cascade do |t|
-    t.integer "doctor_id"
-    t.integer "pacient_id"
+    t.integer "doctor_id",  limit: 4
+    t.integer "pacient_id", limit: 4
   end
 
   create_table "groups", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "name", limit: 255, null: false
   end
 
-  add_index "groups", ["name"], name: "index_groups_on_name", unique: true
+  add_index "groups", ["name"], name: "index_groups_on_name", unique: true, using: :btree
 
   create_table "groups_url_types", force: :cascade do |t|
-    t.integer "url_type_id"
-    t.integer "group_id"
+    t.integer "url_type_id", limit: 4
+    t.integer "group_id",    limit: 4
   end
 
   create_table "groups_users", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "group_id"
+    t.integer "user_id",  limit: 4
+    t.integer "group_id", limit: 4
   end
 
   create_table "meterings", force: :cascade do |t|
-    t.integer "result"
+    t.integer "result", limit: 4
   end
 
   create_table "pacients", force: :cascade do |t|
-    t.string   "analysis_name", null: false
+    t.string   "analysis_name", limit: 255, null: false
     t.datetime "analysis_date"
   end
 
   create_table "pacients_doctors", force: :cascade do |t|
-    t.integer "doctor_id"
-    t.integer "pacient_id"
+    t.integer "doctor_id",  limit: 4
+    t.integer "pacient_id", limit: 4
   end
 
   create_table "url_types", force: :cascade do |t|
-    t.string "name"
+    t.string "name", limit: 255
   end
 
-  add_index "url_types", ["name"], name: "index_url_types_on_name", unique: true
+  add_index "url_types", ["name"], name: "index_url_types_on_name", unique: true, using: :btree
 
   create_table "urls", force: :cascade do |t|
-    t.string  "url_pattern"
-    t.string  "name"
-    t.integer "url_type_id"
-    t.integer "sorder"
+    t.string  "url_pattern", limit: 255
+    t.string  "name",        limit: 255
+    t.integer "url_type_id", limit: 4
+    t.integer "sorder",      limit: 4
   end
 
   create_table "users", force: :cascade do |t|
     t.string "name", limit: 30, null: false
   end
 
-  add_index "users", ["name"], name: "index_users_on_name", unique: true
+  add_index "users", ["name"], name: "index_users_on_name", unique: true, using: :btree
 
 end

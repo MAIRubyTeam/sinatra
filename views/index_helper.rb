@@ -1,3 +1,4 @@
+=begin
 helpers do
   def csrf_token
     Rack::Csrf.csrf_token(env)
@@ -7,3 +8,4 @@ helpers do
     Rack::Csrf.csrf_tag(env)
   end
 end
+=end
