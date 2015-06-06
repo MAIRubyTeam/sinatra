@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>DBTableEditor</title>
+    <title><%= entity.capitalize %></title>
     <link rel = "stylesheet"
     href = "../workspace/ext/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all.css">
     <link rel = "stylesheet"
@@ -14,19 +14,16 @@
 Ext.syncRequire(['Ext.app.Application']);
 
 <%= erb :dbtableeditor_models, :locals => {:entity => entity, :columns => columns} %>
-<%= erb :dbtableeditor_viewcontrollers, :locals => {:entity => entity, :columns => columns} %>
 <%= erb :dbtableeditor_viewmodels, :locals => {:entity => entity, :columns => columns} %>
 <%= erb :dbtableeditor_views, :locals => {:entity => entity, :columns => columns} %>
 
 Ext.application(
 {
     name: 'DBTableEditor',
-    //controllers: ['Routing'],
     models: ['<%= entity.capitalize %>',],
-    views: ['basegrid.Basegrid', 'main.Main', '<%= entity %>.View'],
-    //appFolder: 'DBTableEditor/app',
+    views: ['basegrid.Basegrid', '<%= entity %>.View'],
 
-    autoCreateViewport: 'DBTableEditor.view.main.Main'
+    autoCreateViewport: 'DBTableEditor.view.<%= entity %>.View',
 })
 </script>
 
