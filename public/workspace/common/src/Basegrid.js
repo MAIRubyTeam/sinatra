@@ -22,21 +22,25 @@ Ext.define("basegrid.Basegrid",{
         {
             xtype: 'button',
             text: 'Добавить',
-            handler: 'onAddClick'
+            handler: 'onAddClick',
+            iconCls: 'icon-add'
         },
         {
             xtype: 'button',
             text: 'Удалить',
-            handler: 'onDeleteClick'
+            handler: 'onDeleteClick',
+            iconCls: 'icon-delete'
         },
         {
             xtype: 'button',
             text: 'Сохранить',
-            handler: 'onSaveClick'
+            handler: 'onSaveClick',
+            iconCls: 'icon-save'
         },
         {
             xtype: 'button',
             text: 'Обновить',
-            handler: 'onUpdateClick'
+            handler: 'onUpdateClick',
+            iconCls: 'icon-load'
         }]
 });

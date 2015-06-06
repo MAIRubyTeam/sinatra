@@ -11,7 +11,8 @@ Ext.define('DBTableEditor.view.<%= entity %>.View', {
         xtype: 'basegrid',
         columns:[
             <% columns.each do |elem| %>
-                { text: '<%= elem %>', dataIndex: '<%= elem %>', editor: {xtype: 'textfield'}},
+                { text: '<%= elem %>', dataIndex: '<%= elem %>', editor: {xtype: 'textfield'}, 
+                    <% if elem != "id" %> flex: 1 <% end %>},
             <% end %>
         ],
         bind: {store: '{<%= entity %>Store}'}
@@ -33,7 +34,13 @@ Ext.define('DBTableEditor.view.main.Main', {
         type: 'border'
     },
 
-    items: [    
+    items: [
+    {
+        xtype: 'panel',
+        region: 'north',
+        height: 20,
+        html: '<h2 align = "center"><%= entity.capitalize %></h2>'
+    },    
     {
         xtype: '<%= entity %>Panel',
         region: 'center'
