@@ -5,8 +5,7 @@ require 'capybara'
 require 'capybara/dsl'
 require 'active_support/testing/autorun'
 require 'active_support/test_case'
-require 'net/http'
-require 'openssl'
+require 'database_cleaner'
 
 require_relative './../init.rb'
 
@@ -30,6 +29,18 @@ class ActiveSupport::TestCase
 
   def init
     Init
+  end
+end
+
+DatabaseCleaner.strategy = :transaction
+
+class MiniTest::Spec
+  before :each do
+    DatabaseCleaner.start
+  end
+
+  after :each do
+    DatabaseCleaner.clean
   end
 end
 

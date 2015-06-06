@@ -22,9 +22,5 @@ group :test do
   gem "minitest-capybara"
   gem "minitest"
   gem "rack-test"
+  gen "database_cleaner"
 end
-
-
-=======
-gem 'rack_csrf'
->>>>>>> fc0b79ac6cc2a20a2fb66464c146d214ce0623b6

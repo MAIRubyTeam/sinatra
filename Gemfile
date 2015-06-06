@@ -22,4 +22,5 @@ group :test do
   gem "minitest-capybara"
   gem "minitest"
   gem "rack-test"
+  gem "database_cleaner"
 end

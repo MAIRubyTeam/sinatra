@@ -1,4 +1,8 @@
 require File.expand_path '../test_helper.rb', __FILE__
+require 'database_cleaner'
+
+DatabaseCleaner.strategy = :truncation
+DatabaseCleaner.clean
 
 class ApiTest < MiniTest::Unit::TestCase
   include Capybara::DSL
@@ -25,8 +29,8 @@ class ApiTest < MiniTest::Unit::TestCase
     parsed_body = ActiveSupport::JSON.decode(last_response.body)
     #p parsed_body = response_body(last_response)
     p parsed_body
-    p assert_equal parsed_body[i]["id"], id, parsed_body
-    p assert_equal parsed_body[i]["name"], name, parsed_body
+    p assert_equal parsed_body[i]["id"], id
+    p assert_equal parsed_body[i]["name"], name
     p parsed_body[i]["id"]
     p parsed_body[i]["name"]
   end
@@ -36,22 +40,22 @@ class ApiTest < MiniTest::Unit::TestCase
   end
 
   def test_entity_create
-    post("/users", name: "vasya5")
+    post("/users", name: "vasya1")
     assert last_response.status == 200
     #p response_body(last_response)
     p "!!!!!!!!!!!!!!!!!!!!"
-    check_fields(5, "vasya5", 4)
+    check_fields(1, "vasya1", 0)
     puts "________create"
   end
-
 =begin
   def test_entity_delete
     delete 'users/1'
 
     assert last_response.status == 200
+    check_fields(1, "vasya1", 0)
     puts "________delete"
   end
-=end
+
 
   def test_entity_update
     test_get_entity_id
@@ -59,23 +63,24 @@ class ApiTest < MiniTest::Unit::TestCase
     put '/users/1', name: "petya1"
     assert last_response.status == 200
 
-    check_fields(1, "petya1", 1)
+    check_fields(1, "petya1", 0)
+    puts "________update"
   end
-
+=end
   def test_get_entity_id
     test_get_entity
 
     get '/users/1'
     assert last_response.status == 200
-    check_fields(2, "vasya2", 1)
+    check_fields(1, "vasya1", 0)
     puts "________entity_id"
   end
 
   def test_get_entity
     get "/users"
     #response_body(last_response)
-    check_fields(2, "vasya2", 1)
+    check_fields(1, "vasya1", 0)
     puts "________entity"
   end
-  
+
 end

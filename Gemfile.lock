@@ -25,6 +25,7 @@ GEM
       xpath (~> 2.0)
     data_objects (0.10.16)
       addressable (~> 2.1)
+    database_cleaner (1.4.1)
     dm-core (1.2.1)
       addressable (~> 2.3)
     dm-do-adapter (1.2.0)
@@ -80,6 +81,7 @@ DEPENDENCIES
   activesupport
   arel
   capybara
+  database_cleaner
   dm-sqlite-adapter
   json
   minitest
@@ -92,3 +94,6 @@ DEPENDENCIES
   sinatra
   sinatra-activerecord
   sqlite3
+
+BUNDLED WITH
+   1.10.3
