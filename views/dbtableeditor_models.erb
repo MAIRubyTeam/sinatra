@@ -1,6 +1,8 @@
-<% column_hash.each do |key, value| %>
-	Ext.define('DBTableEditor.model.<%= key.capitalize %>', {
-		extend: 'Ext.data.Model',
-		fields: <%= value %>,
-	});
-<% end %>
+Ext.define('DBTableEditor.model.<%= entity.capitalize %>', {
+	extend: 'Ext.data.Model',
+	fields:[
+	<% columns.each do |elem| %>
+		{name: '<%= elem %>', allowNull: true},
+	<% end %>
+	]
+});

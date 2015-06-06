@@ -27,6 +27,7 @@ get '/' do
 end
 
 post '/:entity' do
+  p params
   entity = Arel::Table.new(params[:entity])
   insert_manager = Arel::InsertManager.new(ActiveRecord::Base)
 

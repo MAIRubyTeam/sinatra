@@ -1,39 +1,29 @@
-<% column_hash.each do |key, value| %>
-	Ext.define('DBTableEditor.view.<%= key %>.ViewModel', {
-	    extend: 'Ext.app.ViewModel',
-	    alias: 'viewmodel.<%= key %>-view',
-	    data: {
-	        name: 'DBTableEditor',
-	    },
+Ext.define('DBTableEditor.view.<%= entity %>.ViewModel', {
+	extend: 'Ext.app.ViewModel',
+	alias: 'viewmodel.<%= entity %>-view',
+	data: {
+	    name: 'DBTableEditor',
+	},
 
-	    stores: {
-	        <%= key %>Store: 
-	        {
-	            type: 'store',
-	            model: 'DBTableEditor.model.<%= key.capitalize %>',  
-	            proxy: {
-	                type: 'rest',
-	                url : '/<%= key %>',
-	                reader: {
-	                    type: 'json'
-	                },
-	                writer: {
-	                    type: 'json'
-	                }
+	stores: {
+	    <%= entity %>Store: 
+	    {
+	        type: 'store',
+	        model: 'DBTableEditor.model.<%= entity.capitalize %>',  
+	        proxy: {
+	            type: 'rest',
+	            url : '/<%= entity %>',
+	            reader: {
+	                type: 'json'
+	            },
+	            writer: {
+	                type: 'json'
 	            }
 	        }
 	    }
-	});
-<% end %>
-
-Ext.define('DBTableEditor.view.basegrid.ViewModel', {
-	extend: 'Ext.app.ViewModel',
-	alias: 'viewmodel.basegrid-view',
-	data: {
-	    name: 'DBTableEditor',
 	}
-
 });
+
 
 Ext.define('DBTableEditor.view.main.MainModel', {
     extend: 'Ext.app.ViewModel',

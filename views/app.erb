@@ -3,30 +3,25 @@
     <title>DBTableEditor</title>
     <link rel = "stylesheet"
     href = "../DBTableEditor/ext/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all.css">
-    <script src = "../DBTableEditor/ext/build/ext-all.js"></script>
-
+    <script src = "../workspace/ext/build/ext-all.js"></script>
+    <script src = "../workspace/common/src/Basegrid.js"></script>
+    <script src = "../workspace/common/src/BasegridController.js"></script>
+    <script src = "../workspace/common/src/BasegridModel.js"></script>
 <script>
 
 Ext.syncRequire(['Ext.app.Application']);
 
-<%= erb :dbtableeditor_models, :locals => {:column_hash => column_hash} %>
-<%= erb :dbtableeditor_viewcontrollers, :locals => {:column_hash => column_hash} %>
-<%= erb :dbtableeditor_viewmodels, :locals => {:column_hash => column_hash} %>
-<%= erb :dbtableeditor_views, :locals => {:column_hash => column_hash} %>
-<%= erb :dbtableeditor_controllers, :locals => {:column_hash => column_hash} %>
+<%= erb :dbtableeditor_models, :locals => {:entity => entity, :columns => columns} %>
+<%= erb :dbtableeditor_viewcontrollers, :locals => {:entity => entity, :columns => columns} %>
+<%= erb :dbtableeditor_viewmodels, :locals => {:entity => entity, :columns => columns} %>
+<%= erb :dbtableeditor_views, :locals => {:entity => entity, :columns => columns} %>
 
 Ext.application(
 {
     name: 'DBTableEditor',
-    controllers: ['Routing'],
-    models: [
-    <% column_hash.each do |key, value| %>
-        '<%= key.capitalize %>',
-    <% end %>],
-    views: ['basegrid.View', 'main.Main', 
-    <% column_hash.each do |key, value| %>
-        '<%= key %>.View',
-    <% end %>],
+    //controllers: ['Routing'],
+    models: ['<%= entity.capitalize %>',],
+    views: ['basegrid.Basegrid', 'main.Main', '<%= entity %>.View'],
     //appFolder: 'DBTableEditor/app',
 
     autoCreateViewport: 'DBTableEditor.view.main.Main'
