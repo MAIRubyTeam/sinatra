@@ -27,7 +27,6 @@ class ApiTest < MiniTest::Unit::TestCase
   def check_fields(id, name, i)
     get "/users"
     parsed_body = ActiveSupport::JSON.decode(last_response.body)
-    #p parsed_body = response_body(last_response)
     p parsed_body
     p assert_equal parsed_body[i]["id"], id
     p assert_equal parsed_body[i]["name"], name
@@ -42,8 +41,6 @@ class ApiTest < MiniTest::Unit::TestCase
   def test_entity_create
     post("/users", name: "vasya1")
     assert last_response.status == 200
-    #p response_body(last_response)
-    p "!!!!!!!!!!!!!!!!!!!!"
     check_fields(1, "vasya1", 0)
     puts "________create"
   end
@@ -58,15 +55,13 @@ class ApiTest < MiniTest::Unit::TestCase
 
 
   def test_entity_update
-    test_get_entity_id
-
     put '/users/1', name: "petya1"
     assert last_response.status == 200
 
     check_fields(1, "petya1", 0)
     puts "________update"
   end
-=end
+
   def test_get_entity_id
     test_get_entity
 
@@ -78,9 +73,8 @@ class ApiTest < MiniTest::Unit::TestCase
 
   def test_get_entity
     get "/users"
-    #response_body(last_response)
     check_fields(1, "vasya1", 0)
     puts "________entity"
   end
-
+=end
 end

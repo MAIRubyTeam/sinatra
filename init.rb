@@ -16,10 +16,13 @@ use Rack::Session::Cookie, :secret => "smth"
 # use Rack::Csrf, :raise => true
 enable :logging
 
-def delete_bad_params(parameters)
-  parameters.delete("entity")
-  parameters.delete("captures")
-  parameters.delete("splat")
+def parse_body(req)
+  body_data = req.body.read
+  body_data.tr!("\"{}", "")
+  body_data = body_data.split(",")
+  body_data.map!{|elem| elem.split(":")}
+  body_data = body_data[1..-1]
+  body_data
 end
 
 get '/' do
@@ -27,22 +30,12 @@ get '/' do
 end
 
 post '/:entity' do
-  p params
+  body_data = parse_body(request)
+
   entity = Arel::Table.new(params[:entity])
   insert_manager = Arel::InsertManager.new(ActiveRecord::Base)
-
-  parameters = params
-  delete_bad_params(parameters)
-     
-  par = parameters.to_a
-
-  for i in 0...parameters.size
-    tmp = par[i][0]
-    tmp.to_sym
-    par[i][0] = entity[tmp]
-  end
-
-  insert_manager.insert(par)
+  body_data.each{|field| field[0] = entity[field[0].to_sym]}
+  insert_manager.insert(body_data)
   ActiveRecord::Base.connection.insert(insert_manager.to_sql).to_json
 end
 
@@ -50,27 +43,19 @@ end
 delete '/:entity/:id' do
   entity = Arel::Table.new(params[:entity])
   delete_manager = Arel::DeleteManager.new(ActiveRecord::Base)
-  delete_manager.from(entity).where(entity[:id])
+  delete_manager.from(entity).where(entity[:id].eq(params[:id]))
   ActiveRecord::Base.connection.delete(delete_manager.to_sql).to_json
 end
 
 put '/:entity/:id' do
-  #{id: params[:id].to_i, name: params[:name]}.to_json
+  body_data = parse_body(request)
+
   entity = Arel::Table.new(params[:entity])
   update_manager = Arel::UpdateManager.new(ActiveRecord::Base)
-  update_manager.table(entity).where(entity[:id])
-
-  parameters = params
-  delete_bad_params(parameters)
-
-  par = parameters.to_a
-
-  for i in 0...parameters.size
-    tmp = par[i][0]
-    tmp.to_sym
-    par[i][0] = entity[tmp]
-  end
-  update_manager.set(par)
+  body_data.each{|field| field[0] = entity[field[0].to_sym]}
+  update_manager.table(entity).where(entity[:id].eq(params[:id]))
+  update_manager.set(body_data)
+  p update_manager.to_sql
   ActiveRecord::Base.connection.update(update_manager.to_sql).to_json
 end
 
@@ -84,5 +69,4 @@ get '/:entity' do
   entity = Arel::Table.new(params[:entity])
   select_manager = entity.project(Arel.star)
   ActiveRecord::Base.connection.select_all(select_manager.to_sql).to_json
-  #[{id: 1, name: "kolya"},{id: 2, name: "petya"}].to_json
 end
