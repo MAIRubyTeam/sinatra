@@ -1,21 +1,3 @@
-# encoding: utf-8
-require 'sinatra'
-require 'sinatra/activerecord'
-require 'json'
-require 'yaml'
-require 'rack/csrf'
-require "#{__dir__}/views/index_helper"
-require "./extjs_generator"
-
-current_env = ENV["RACK_ENV"] ? ENV["RACK_ENV"] : "development"
-db_config = YAML::load_file("#{__dir__}/config/database.yml")
-ActiveRecord::Base.configurations = db_config
-ActiveRecord::Base.establish_connection(current_env.to_sym)
-
-use Rack::Session::Cookie, :secret => "smth"
-# use Rack::Csrf, :raise => true
-enable :logging
-
 def parse_body(req)
   body_data = req.body.read
   body_data.tr!("\"{}", "")
@@ -23,10 +5,6 @@ def parse_body(req)
   body_data.map!{|elem| elem.split(":")}
   body_data = body_data[1..-1]
   body_data
-end
-
-get '/' do
-  erb :index
 end
 
 post '/:entity' do
@@ -69,4 +47,8 @@ get '/:entity' do
   entity = Arel::Table.new(params[:entity])
   select_manager = entity.project(Arel.star)
   ActiveRecord::Base.connection.select_all(select_manager.to_sql).to_json
+end
+
+not_found do
+  erb :error, :locals => {:message => env['sinatra.error'].message}
 end

@@ -15,15 +15,7 @@ class ApiTest < MiniTest::Unit::TestCase
   def app
     Sinatra::Application
   end
-=begin
-  def response_body(last_response)
-    get "/users"
-    parsed_body = ActiveSupport::JSON.decode(last_response.body)
-    p "PARSED_BODY"
-    p parsed_body
-    parsed_body
-  end
-=end
+
   def check_fields(id, name, i)
     get "/users"
     parsed_body = ActiveSupport::JSON.decode(last_response.body)

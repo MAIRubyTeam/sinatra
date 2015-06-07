@@ -5,9 +5,8 @@ require 'capybara'
 require 'capybara/dsl'
 require 'active_support/testing/autorun'
 require 'active_support/test_case'
-require 'database_cleaner'
 
-require_relative './../init.rb'
+require_relative './../app.rb'
 
 def create_fixtures(*fixture_set_names, &block)
   FixtureSet.create_fixtures(ActiveSupport::TestCase.fixture_path, fixture_set_names, {}, &block)
@@ -27,20 +26,7 @@ class ActiveSupport::TestCase
 
   include Rack::Test::Methods
 
-  def init
-    Init
+  def App
+    app
   end
 end
-
-DatabaseCleaner.strategy = :transaction
-
-class MiniTest::Spec
-  before :each do
-    DatabaseCleaner.start
-  end
-
-  after :each do
-    DatabaseCleaner.clean
-  end
-end
-
