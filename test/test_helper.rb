@@ -3,8 +3,10 @@ require 'minitest/autorun'
 require 'rack/test'
 require 'capybara'
 require 'capybara/dsl'
+require 'arel'
 require 'active_support/testing/autorun'
 require 'active_support/test_case'
+require 'database_cleaner'
 
 require_relative './../app.rb'
 
@@ -13,6 +15,7 @@ def create_fixtures(*fixture_set_names, &block)
 end
 
 class ActiveSupport::TestCase
+
   ActiveRecord::Migration.check_pending!
   include ActiveRecord::TestFixtures
   self.fixture_path = "./test/fixtures/"
@@ -26,7 +29,17 @@ class ActiveSupport::TestCase
 
   include Rack::Test::Methods
 
-  def App
-    app
+  def app
+    App
+  end
+
+  DatabaseCleaner.strategy = :transaction
+
+  setup do
+    DatabaseCleaner.start
+  end
+
+  teardown do
+    DatabaseCleaner.clean
   end
 end

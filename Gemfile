@@ -16,7 +16,6 @@ group :development, :production do
 end
 
 group :test do
-  gem 'dm-sqlite-adapter'
   gem "sqlite3"
   gem "capybara"
   gem "minitest-capybara"

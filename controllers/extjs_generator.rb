@@ -1,13 +1,13 @@
-require 'sinatra'
-require 'sinatra/activerecord'
+class App < Sinatra::Base
 
-get '/app/:entity' do
+	get '/app/:entity' do
 
-	entity = params[:entity]
+		entity = params[:entity]
 
-	columns = ActiveRecord::Base.connection.columns(entity)
+		columns = ActiveRecord::Base.connection.columns(entity)
 
-	column_names = columns.map{|column| column.name }
+		column_names = columns.map{|column| column.name }
 
-	erb :app, :locals => {:entity => entity, :columns => column_names}
+		erb :app, :locals => {:entity => entity, :columns => column_names}
+	end
 end

@@ -1,8 +1,8 @@
-path = File.expand_path "../", __FILE__
-
 require 'rubygems'
 require 'sinatra'
+require 'bundler'
+require 'bundler/setup'
 
 require './app'
-run Sinatra::Application
+run App
 

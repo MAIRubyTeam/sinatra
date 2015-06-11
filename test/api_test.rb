@@ -1,72 +1,109 @@
 require File.expand_path '../test_helper.rb', __FILE__
-require 'database_cleaner'
 
-DatabaseCleaner.strategy = :truncation
-DatabaseCleaner.clean
+# разобраться с фикстурами
+# разобраться с http-запросом, URL
+# разобраться с тестами
+# разобраться - написать конспект по теме
 
-class ApiTest < MiniTest::Unit::TestCase
+class ApiTest < ActiveSupport::TestCase
   include Capybara::DSL
   include Rack::Test::Methods
-  # Capybara.default_driver = :selenium # <-- use Selenium driver
-  def setup
-    Capybara.app = Sinatra::Application.new
-  end
-
-  def app
-    Sinatra::Application
-  end
-
-  def check_fields(id, name, i)
-    get "/users"
-    parsed_body = ActiveSupport::JSON.decode(last_response.body)
-    p parsed_body
-    p assert_equal parsed_body[i]["id"], id
-    p assert_equal parsed_body[i]["name"], name
-    p parsed_body[i]["id"]
-    p parsed_body[i]["name"]
-  end
-
+  
   def home_page
     visit '/'
+  test_entity_delete
+
+  def check_data(result, real_result)
+    result[:columns].each_index do |i|
+      assert_equal real_result.columns[i], result[:columns][i]
+    end
+
+    result[:rows].each_index do |i|
+      result[:rows][i].each_index do |j|
+        assert_equal real_result.rows[i][j], result[:rows][i][j]
+      end
+    end
   end
 
-  def test_entity_create
-    post("/users", name: "vasya1")
-    assert last_response.status == 200
-    check_fields(1, "vasya1", 0)
-    puts "________create"
-  end
-=begin
-  def test_entity_delete
-    delete 'users/1'
+  def parse_response_json(response)
+    data = ActiveSupport::JSON.decode(response)
 
-    assert last_response.status == 200
-    check_fields(1, "vasya1", 0)
-    puts "________delete"
-  end
+    rows = []
+    columns = [] 
 
-
-  def test_entity_update
-    put '/users/1', name: "petya1"
-    assert last_response.status == 200
-
-    check_fields(1, "petya1", 0)
-    puts "________update"
-  end
-
-  def test_get_entity_id
-    test_get_entity
-
-    get '/users/1'
-    assert last_response.status == 200
-    check_fields(1, "vasya1", 0)
-    puts "________entity_id"
+    data.each do |row|
+      temp_row = []
+      row.each_pair do |col, val|
+        columns << col unless columns.include? col
+        temp_row << val
+      end
+      rows << temp_row
+    end
+    {columns: columns, rows: rows,  data: data }
   end
 
   def test_get_entity
-    get "/users"
-    check_fields(1, "vasya1", 0)
-    puts "________entity"
+    get '/users'
+    assert last_response.ok?, last_response.inspect
+
+    real_result = ActiveRecord::Base.connection.select_all("
+    SELECT * FROM users")
+
+    response_body = last_response.body
+    result = parse_response_json(response_body)
+    #p result
+    #p real_result
+    check_data(result, real_result)
   end
+
+  def test_get_entity_id
+    get "/users/#{users(:user_one).id}"
+    assert last_response.ok?, last_response.inspect
+    real_result = ActiveRecord::Base.connection.select_all("
+    SELECT * FROM users WHERE id = '#{users(:user_one).id}'")
+    
+    response_body = last_response.body
+    result = parse_response_json(response_body)
+    check_data(result, real_result)
+  end
+
+=begin
+  def test_entity_create
+    post "/users", name: "petya"
+    assert last_response.ok?, last_response.inspect
+
+    response_body = last_response.body
+    result = parse_response_json(response_body)
+
+    real_result = ActiveRecord::Base.connection.select_all("
+    SELECT * FROM users WHERE name = petya")
+    check_data(result, real_result)
+  end
+
+=begin
+  def test_entity_delete
+    delete 'users/265'
+    assert last_response.ok?, last_response.inspect
+
+    real_result = ActiveRecord::Base.connection.select_all("
+    SELECT * FROM users WHERE id = 265")
+    assert_empty real_result, real_result.inspect
+  end
+=begin
+  def test_entity_update
+    put '/users/1', name: "petya1"
+    assert last_response.ok?, last_response.inspect
+
+    response_body = last_response.body
+    result = parse_response_to_json(response_body)
+    
+    real_result = ActiveRecord::Base.connection.select_all("
+    SELECT * FROM users WHERE name = petya1")
+    assert_equal result, real_result
+  end
+
+  
 =end
+  
+
 end
