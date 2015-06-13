@@ -1,17 +1,9 @@
 require File.expand_path '../test_helper.rb', __FILE__
 
-# разобраться с фикстурами
-# разобраться с http-запросом, URL
-# разобраться с тестами
-# разобраться - написать конспект по теме
-
 class ApiTest < ActiveSupport::TestCase
+
   include Capybara::DSL
   include Rack::Test::Methods
-  
-  def home_page
-    visit '/'
-  test_entity_delete
 
   def check_data(result, real_result)
     result[:columns].each_index do |i|
@@ -57,7 +49,7 @@ class ApiTest < ActiveSupport::TestCase
   end
 
   def test_get_entity_id
-    get "/users/#{users(:user_one).id}"
+    get "/users/'#{users(:user_two).id}'"
     assert last_response.ok?, last_response.inspect
     real_result = ActiveRecord::Base.connection.select_all("
     SELECT * FROM users WHERE id = '#{users(:user_one).id}'")
@@ -67,7 +59,6 @@ class ApiTest < ActiveSupport::TestCase
     check_data(result, real_result)
   end
 
-=begin
   def test_entity_create
     post "/users", name: "petya"
     assert last_response.ok?, last_response.inspect
@@ -80,7 +71,6 @@ class ApiTest < ActiveSupport::TestCase
     check_data(result, real_result)
   end
 
-=begin
   def test_entity_delete
     delete 'users/265'
     assert last_response.ok?, last_response.inspect
@@ -89,7 +79,7 @@ class ApiTest < ActiveSupport::TestCase
     SELECT * FROM users WHERE id = 265")
     assert_empty real_result, real_result.inspect
   end
-=begin
+
   def test_entity_update
     put '/users/1', name: "petya1"
     assert last_response.ok?, last_response.inspect
@@ -101,9 +91,4 @@ class ApiTest < ActiveSupport::TestCase
     SELECT * FROM users WHERE name = petya1")
     assert_equal result, real_result
   end
-
-  
-=end
-  
-
 end
