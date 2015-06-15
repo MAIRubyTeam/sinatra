@@ -4,6 +4,7 @@ require 'rack/test'
 require 'capybara'
 require 'capybara/dsl'
 require 'arel'
+require 'json'
 require 'active_support/testing/autorun'
 require 'active_support/test_case'
 require 'database_cleaner'
@@ -44,9 +45,9 @@ class ActiveSupport::TestCase
     end
   end
 
-  fixtures_names.each do |file_name| 
+  fixtures_names.each do |file_name|
     Object.const_set file_name, Class.new(ActiveRecord::Base)
-    set_fixture_class "#{file_name.downcase}".to_sym 
+    set_fixture_class "#{file_name.downcase}".to_sym => Object.const_get(file_name)
   end
   
   fixtures :all
@@ -66,5 +67,44 @@ class ActiveSupport::TestCase
 
   teardown do
     DatabaseCleaner.clean
+  end
+
+  def check_data(result, real_result)
+    result[:columns].each_index do |i|
+      assert_equal real_result.columns[i], result[:columns][i]
+    end
+
+    result[:rows].each_index do |i|
+      p result[:rows]
+      result[:rows][i].each_index do |j|
+        assert_equal real_result.rows[i][j], result[:rows][i][j]
+      end
+    end
+  end
+
+  def parse_response_json(body)
+    data = ActiveSupport::JSON.decode(body)
+
+    if (data.class == Hash)
+      data = [data]
+    end
+
+    rows = []
+    columns = [] 
+
+    data.each do |row|
+      print "ROW "
+      p row
+      temp_row = []
+      row.each_pair do |col, val|
+        print "COL VAL "
+        print col
+        p val
+        columns << col unless columns.include? col
+        temp_row << val
+      end
+      rows << temp_row
+    end
+    {columns: columns, rows: rows,  data: data }
   end
 end
