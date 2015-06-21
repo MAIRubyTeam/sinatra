@@ -1,8 +1,8 @@
 Ext.define('DBTableEditor.model.<%= entity.capitalize %>', {
 	extend: 'Ext.data.Model',
 	fields:[
-	<% columns.each do |elem| %>
-		{name: '<%= elem %>', allowNull: true},
+	<% columns.each do |c_name, c_type| %>
+		{name: '<%= c_name %>', allowNull: true, type: '<%= c_type %>'},
 	<% end %>
 	]
 });
