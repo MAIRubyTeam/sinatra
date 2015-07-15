@@ -18,7 +18,7 @@ class ApiTest < ActiveSupport::TestCase
   end
 
   def test_get_entity_id
-    get "/users/'#{users(:user_one).id}'"
+    get "/users/#{users(:user_one).id}"
     assert last_response.ok?, last_response.inspect
 
     real_result = ActiveRecord::Base.connection.select_all("
@@ -30,34 +30,45 @@ class ApiTest < ActiveSupport::TestCase
   end
 
   def test_entity_create
-    post "/users/", "#{users(:user_one).name}"
-    #assert last_response.ok?, last_response.inspect
-    real_result = ActiveRecord::Base.connection.select_all("
-    SELECT * FROM users WHERE name = '#{users(:user_one).name}'")
+    data = {
+            id: 987556849,
+            name: 'user9'
+    }
+    post '/users', data.to_json, "CONTENT_TYPE" => "application/json"
+    assert last_response.ok?
 
-    request_body = last_request.body.string
-    result = parse_response_json(request_body)
+    #body_expected = "#{JSON.parse(data.to_json).to_s}"
+
+    real_result = ActiveRecord::Base.connection.select_all("
+    SELECT * FROM users WHERE name = '#{data[:name]}'")
+
+    result = parse_response_json(data.to_json)
     check_data(result, real_result)
   end
 
   def test_entity_delete
-    delete "users/", "#{users(:user_one).name}"
+    delete "/users"
 
     real_result = ActiveRecord::Base.connection.select_all("
     SELECT * FROM users WHERE name = '#{users(:user_five).name}'")
-    p real_result
+
     assert_empty real_result, real_result.inspect
   end
 
   def test_entity_update
-    put "/users/", "#{users(:user_one).name}"
-    #assert last_response.ok?, last_response.inspect
+    data = {
+            id: 987556849,
+            name: 'user9'
+    }
+    post "/users", data.to_json, "CONTENT_TYPE" => "application/json"
+    assert last_response.ok?
+    assert_not_nil last_response
+    #body_expected = "#{JSON.parse(data.to_json).to_s}"
 
-    request_body = last_request.body.string
-    result = parse_response_json(request_body)
-    
     real_result = ActiveRecord::Base.connection.select_all("
-    SELECT * FROM users WHERE name = '#{users(:three).name}'")
-    assert_equal result, real_result
+    SELECT * FROM users WHERE name = '#{data[:name]}'")
+
+    result = parse_response_json(data.to_json)
+    check_data(result, real_result)
   end
 end

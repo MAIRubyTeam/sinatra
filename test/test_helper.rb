@@ -19,15 +19,24 @@ end
 class ActiveSupport::TestCase
 
   ActiveRecord::Migration.check_pending!
+
   include ActiveRecord::TestFixtures
+  include Rack::Test::Methods
+
   self.fixture_path = "./test/fixtures/"
-
-  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
-  #
-  # Note: You'll currently still have to declare fixtures explicitly in integration tests
-  # — they do not yet inherit this setting
-
   self.use_transactional_fixtures = true
+
+  DatabaseCleaner.strategy = :transaction
+
+  setup do
+    DatabaseCleaner.start
+  end
+
+  teardown do
+    DatabaseCleaner.clean
+  end
+
+  fixtures :all
 
   fixtures_names = []
   Dir.glob("#{__dir__}/fixtures/*.yml").each do |file_name| 
@@ -49,25 +58,6 @@ class ActiveSupport::TestCase
     Object.const_set file_name, Class.new(ActiveRecord::Base)
     set_fixture_class "#{file_name.downcase}".to_sym => Object.const_get(file_name)
   end
-  
-  fixtures :all
-  # Add more helper methods to be used by all tests here...
-
-  include Rack::Test::Methods
-
-  def app
-    App
-  end
-
-  DatabaseCleaner.strategy = :transaction
-
-  setup do
-    DatabaseCleaner.start
-  end
-
-  teardown do
-    DatabaseCleaner.clean
-  end
 
   def check_data(result, real_result)
     result[:columns].each_index do |i|
@@ -75,7 +65,6 @@ class ActiveSupport::TestCase
     end
 
     result[:rows].each_index do |i|
-      p result[:rows]
       result[:rows][i].each_index do |j|
         assert_equal real_result.rows[i][j], result[:rows][i][j]
       end
@@ -107,4 +96,9 @@ class ActiveSupport::TestCase
     end
     {columns: columns, rows: rows,  data: data }
   end
+
+  def app
+    App
+  end
+
 end
