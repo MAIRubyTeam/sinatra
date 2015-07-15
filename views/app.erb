@@ -15,7 +15,7 @@ Ext.syncRequire(['Ext.app.Application']);
 
 <%= erb :dbtableeditor_models, :locals => {:entity => entity, :columns => columns} %>
 <%= erb :dbtableeditor_viewmodels, :locals => {:entity => entity, :columns => columns} %>
-<%= erb :dbtableeditor_views, :locals => {:entity => entity, :columns => columns} %>
+<%= erb :dbtableeditor_views, :locals => {:entity => entity, :columns => columns, :column_editors => column_editors} %>
 
 Ext.application(
 {
