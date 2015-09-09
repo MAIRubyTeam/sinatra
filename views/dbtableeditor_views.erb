@@ -6,9 +6,13 @@ Ext.define('DBTableEditor.view.<%= entity %>.View', {
     title: '<%= entity.capitalize %>',
     columns:[
         <% columns.each do |column_name, column_type| %>
-            { text: '<%= column_name %>', dataIndex: '<%= column_name %>', editor: {xtype: '<%= column_editors[column_type] %>'}, 
-                <% if column_name != "id" %> flex: 1 <% end %>},
+            {
+                text: '<%= column_name %>',
+                dataIndex: '<%= column_name %>',
+                editor: { xtype: '<%= column_editors[column_type] %>' },
+                <% if column_name != "id" %> flex: 1 <% end %>
+            },
         <% end %>
     ],
-    bind: {store: '{<%= entity %>Store}'}
+    bind: { store: '{<%= entity %>Store}' }
 });
