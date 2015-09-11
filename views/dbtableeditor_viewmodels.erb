@@ -1,25 +1,18 @@
 Ext.define('DBTableEditor.view.<%= entity %>.ViewModel', {
 	extend: 'Ext.app.ViewModel',
 	alias: 'viewmodel.<%= entity %>-view',
-	data: {
-	    name: 'DBTableEditor',
-	},
+	data: { name: 'DBTableEditor' },
 
-	stores: {
-	    <%= entity %>Store: 
-	    {
-	        type: 'store',
-	        model: 'DBTableEditor.model.<%= entity.capitalize %>',  
-	        proxy: {
-	            type: 'rest',
-	            url : '/<%= entity %>',
-	            reader: {
-	                type: 'json'
-	            },
-	            writer: {
-	                type: 'json'
-	            }
-	        }
-	    }
+	stores: {<%= entity %>Store: 
+	    	{
+	        	type: 'store',
+	        	model: 'DBTableEditor.model.<%= entity.capitalize %>',  
+	        	proxy: {
+	        	 type: 'rest',
+	        	 url : '/<%= entity %>',
+	            	 reader: { type: 'json' },
+	            	 writer: { type: 'json' }
+	       		}
+	    	}
 	}
 });
