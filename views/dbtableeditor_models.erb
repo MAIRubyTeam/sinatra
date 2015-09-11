@@ -2,7 +2,7 @@ Ext.define('DBTableEditor.model.<%= entity.capitalize %>', {
 	extend: 'Ext.data.Model',
 	fields:[
 	<% columns.each do |column_name, column_type| %>
-		{
+		{       # Подстановка имен и типов колонок
 			name: '<%= column_name %>',
 			allowNull: true, 
 			type: '<%= column_type %>'
