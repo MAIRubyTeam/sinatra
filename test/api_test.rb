@@ -31,18 +31,17 @@ class ApiTest < ActiveSupport::TestCase
 
   def test_entity_create
     data = {
-            id: 987556849,
-            name: 'user9'
+      name: 'user9'
     }
+    
     post '/users', data.to_json, "CONTENT_TYPE" => "application/json"
     assert last_response.ok?
 
-    #body_expected = "#{JSON.parse(data.to_json).to_s}"
+    result = parse_response_json(response.body)
 
     real_result = ActiveRecord::Base.connection.select_all("
-    SELECT * FROM users WHERE name = '#{data[:name]}'")
-
-    result = parse_response_json(data.to_json)
+    SELECT * FROM users WHERE id = #{result[:id]}")
+    
     check_data(result, real_result)
   end
 

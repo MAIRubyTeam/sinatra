@@ -16,6 +16,7 @@ class App < Sinatra::Base
     insert_manager = Arel::InsertManager.new(ActiveRecord::Base)
     body_data.each{|field| field[0] = entity[field[0].to_sym]}
     insert_manager.insert(body_data)
+    #здесь нет записи, надо ее получить и потом преобразовывать в JSON
     ActiveRecord::Base.connection.insert(insert_manager.to_sql).to_json
   end
 
@@ -24,6 +25,7 @@ class App < Sinatra::Base
     entity = Arel::Table.new(params[:entity])
     delete_manager = Arel::DeleteManager.new(ActiveRecord::Base)
     delete_manager.from(entity).where(entity[:id].eq(params[:id]))
+    
     ActiveRecord::Base.connection.delete(delete_manager.to_sql).to_json
   end
 
@@ -36,6 +38,7 @@ class App < Sinatra::Base
     update_manager.table(entity).where(entity[:id].eq(params[:id]))
     update_manager.set(body_data)
     p update_manager.to_sql
+    #здесь нет записи, надо ее получить и потом преобразовывать в JSON
     ActiveRecord::Base.connection.update(update_manager.to_sql).to_json
   end
 
