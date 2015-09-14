@@ -1,14 +1,22 @@
-
+<!--# Во всем файле вместо <%= entity %> - подставляется имя сущности-->
+<!--# capitalize - Возвращает копию строки в которой первый символ преобразуется в верхний регистр, а остальные — в нижний.-->
 Ext.define('DBTableEditor.view.<%= entity %>.View', {
     extend: 'basegrid.Basegrid',
     viewModel: { type: "<%= entity %>-view"},
 
     title: '<%= entity.capitalize %>',
     columns:[
-        <% columns.each do |c_name, c_type| %>
-            { text: '<%= c_name %>', dataIndex: '<%= c_name %>', editor: {xtype: '<%= column_editors[c_type] %>'}, 
-                <% if c_name != "id" %> flex: 1 <% end %>},
+        <% columns.each do |column_name, column_type| %>
+            {
+                <!--# Подстановка имен колонок в имя столбца и в индекс данных столбца -->
+                text: '<%= column_name %>',
+                dataIndex: '<%= column_name %>',
+                <!--# Подстановка типа эдитора по ключу типа данных колонки-->
+                editor: { xtype: '<%= column_editors[column_type] %>' },
+                <!--# Растяжение столбцов всех кроме id-->
+                <% if column_name != "id" %> flex: 1 <% end %>
+            },
         <% end %>
     ],
-    bind: {store: '{<%= entity %>Store}'}
+    bind: { store: '{<%= entity %>Store}' }
 });

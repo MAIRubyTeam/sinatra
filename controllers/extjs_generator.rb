@@ -1,19 +1,23 @@
 class App < Sinatra::Base
+  # отображение типов данных на типы редактора ячеек
+  COLUMN_EDITORS = {
+    int: 'numberfield',
+    string: 'textfield',
+    date: 'datefield'
+  }
+  
+  # для создания javascript-приложения необходим ассоциативный массив
+  # с ключами наименованиями колонок и значениями типами данных
+  get '/app/:entity' do
+	entity = params[:entity]
 
-	get '/app/:entity' do
-
-		entity = params[:entity]
-
-		column_editors = {'int' => 'numberfield', 'string' => 'textfield', 'date' => 'datefield'}
-
-		columns = ActiveRecord::Base.connection.columns(entity)
-
-		column_names = columns.map{|column| column.name }
-		column_types = columns.map{|column| column.sql_type.gsub('varchar', 'string').gsub(/[^a-z]/) { '' }}
-
-		column_array = [column_names, column_types]
-		columns = Hash[*column_array.transpose.flatten]
-
-		erb :app, :locals => {:entity => entity, :columns => columns, :column_editors => column_editors}
+	columns = ActiveRecord::Base.connection.columns(entity)
+	js_columns = {}
+	
+	columns.each do |column|
+	  js_columns[column.name] = column.sql_type.gsub('varchar', 'string').gsub(/[^a-z]/) { '' }
 	end
+
+	erb :app, locals: {entity: entity, columns: js_columns, column_editors: COLUMN_EDITORS}
+  end
 end
