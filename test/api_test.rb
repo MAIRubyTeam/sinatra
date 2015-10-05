@@ -30,18 +30,19 @@ class ApiTest < ActiveSupport::TestCase
   end
 
   def test_entity_create
-    data = {
-      name: 'user9'
+    data_obj = {
+      data: [
+        {name: 'user10'}
+      ]
     }
     
-    post '/users', data.to_json, "CONTENT_TYPE" => "application/json"
+    post '/users', data_obj.to_json, "CONTENT_TYPE" => "application/json"
     assert last_response.ok?
-
-    result = parse_response_json(response.body)
+    result = parse_response_json(data_obj.to_json)
 
     real_result = ActiveRecord::Base.connection.select_all("
-    SELECT * FROM users WHERE id = #{result[:id]}")
-    
+    SELECT * FROM users WHERE id = '#{data_obj[:data].first[:name]}'")
+
     check_data(result, real_result)
   end
 
@@ -55,19 +56,19 @@ class ApiTest < ActiveSupport::TestCase
   end
 
   def test_entity_update
-    data = {
-            id: 987556849,
-            name: 'user9'
+    data_obj = {
+      data: [
+        {name: 'user10'}
+      ]
     }
-    post "/users", data.to_json, "CONTENT_TYPE" => "application/json"
+    post "/users", data_obj.to_json, "CONTENT_TYPE" => "application/json"
     assert last_response.ok?
     assert_not_nil last_response
-    #body_expected = "#{JSON.parse(data.to_json).to_s}"
 
     real_result = ActiveRecord::Base.connection.select_all("
-    SELECT * FROM users WHERE name = '#{data[:name]}'")
+    SELECT * FROM users WHERE name = '#{data_obj[:name]}'")
 
-    result = parse_response_json(data.to_json)
+    result = parse_response_json(data_obj.to_json)
     check_data(result, real_result)
   end
 end

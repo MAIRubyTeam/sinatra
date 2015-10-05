@@ -60,8 +60,9 @@ class ActiveSupport::TestCase
   end
 
   def check_data(result, real_result)
+  assert_equal real_result.columns.length, result[:columns].length, result[:columns]
     result[:columns].each_index do |i|
-      assert_equal real_result.columns[i], result[:columns][i]
+      assert_equal real_result.columns[i], result[:columns][i], result[:columns]
     end
 
     result[:rows].each_index do |i|
@@ -82,13 +83,8 @@ class ActiveSupport::TestCase
     columns = [] 
 
     data.each do |row|
-      print "ROW "
-      p row
       temp_row = []
       row.each_pair do |col, val|
-        print "COL VAL "
-        print col
-        p val
         columns << col unless columns.include? col
         temp_row << val
       end
