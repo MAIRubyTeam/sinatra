@@ -30,19 +30,17 @@ class ApiTest < ActiveSupport::TestCase
   end
 
   def test_entity_create
-    data_obj = {
-      data: [
-        {name: 'user10'}
-      ]
-    }
+      data = {
+        name: 'user10'
+      }
     
-    post '/users', data_obj.to_json, "CONTENT_TYPE" => "application/json"
+    post '/users', data.to_json, "CONTENT_TYPE" => "application/json"
     assert last_response.ok?
-    result = parse_response_json(data_obj.to_json)
+    result = parse_response_json(data.to_json)
 
     real_result = ActiveRecord::Base.connection.select_all("
-    SELECT * FROM users WHERE id = '#{data_obj[:data].first[:name]}'")
-
+    SELECT * FROM users WHERE id = '#{result[:id]}'")
+    p real_result
     check_data(result, real_result)
   end
 
@@ -66,7 +64,7 @@ class ApiTest < ActiveSupport::TestCase
     assert_not_nil last_response
 
     real_result = ActiveRecord::Base.connection.select_all("
-    SELECT * FROM users WHERE name = '#{data_obj[:name]}'")
+    SELECT * FROM users WHERE name = '#{data_obj[:data].first[:name]}'")
 
     result = parse_response_json(data_obj.to_json)
     check_data(result, real_result)
